@@ -61,7 +61,7 @@ export const ValidationComponent = (props) => {
 }
 
 ValidationComponent.propTypes = {
-  error: React.PropTypes.string.isRequired,
+  error: React.PropTypes.string,
   className: React.PropTypes.string,
   children: React.PropTypes.oneOfType([
     React.PropTypes.element,
@@ -376,8 +376,7 @@ TrainingEditPageContainer.propTypes = {
 
 ### ./src/pages/training/edit/components/validations/trainingFormConstraints.js
 ```javascript
-import * as moment from 'moment';
-import {Training} from '../../../../../models/training';
+import moment from 'moment';
 import {formatConstants} from '../../../../../common/constants/formatConstants';
 
 export const trainingFormConstraints = {
@@ -388,7 +387,7 @@ export const trainingFormConstraints = {
     presence: true,
     url: true,
   },
-  endDate: (value: number, training: Training) => {
+  endDate: (value, training) => {
     const startDateFormatted = moment(training.startDate)
       .format(formatConstants.shortDate);
 
@@ -405,13 +404,12 @@ export const trainingFormConstraints = {
 
 ### ./src/pages/training/edit/components/validations/trainingFormValidations.js
 ```javascript
-const validate: any = require('validate.js');
-import {Training} from '../../../../../models/training';
+import validate from 'validate.js';
 import {TrainingErrors} from '../../../../../models/trainingErrors';
 import {trainingFormConstraints} from './trainingFormConstraints';
 
 class TrainingFormValidations {
-  public validateField(training: Training, fieldName: string, value): string {
+  validateField(training, fieldName, value) {
     const updatedTraining = {
       ...training,
       [fieldName]: value,
@@ -422,19 +420,19 @@ class TrainingFormValidations {
     return this.getSingleError(fieldName, errors);
   }
 
-  private getSingleError(fieldName:string, errors: string[]): string {
+  getSingleError(fieldName, errors) {
     return (errors && errors[fieldName] && errors[fieldName].length > 0) ?
       errors[fieldName][0] :
       '';
   }
 
-  public validateForm(training: Training): TrainingErrors {
+  validateForm(training) {
     const errors = validate(training, trainingFormConstraints);
 
     return this.getTrainingErrors(errors);
   }
 
-  private getTrainingErrors(errors): TrainingErrors {
+  getTrainingErrors(errors) {
     const trainingErrors = new TrainingErrors();
 
     if(errors) {
@@ -446,7 +444,7 @@ class TrainingFormValidations {
     return trainingErrors;
   }
 
-  public isValidForm(trainingErrors: TrainingErrors): boolean {
+  isValidForm(trainingErrors) {
     return Object.keys(trainingErrors).every((error) => {
       return !error && error.length <= 0;
     });
@@ -459,7 +457,7 @@ export const trainingFormValidations = new TrainingFormValidations();
 
 - Then we can use it in _TrainingEditPageContainer_:
 
-```javascript
+```diff
 import * as React from 'react';
 import * as toastr from 'toastr';
 import {hashHistory} from 'react-router';
@@ -469,16 +467,7 @@ import {TrainingEditPage} from './page';
 import {trainingAPI} from '../../../rest-api/training/trainingAPI';
 + import {trainingFormValidations} from './components/validations/trainingFormValidations';
 
-interface Props {
-  params: any
-}
-
-interface State {
-  training: Training;
-+ trainingErrors: TrainingErrors;
-}
-
-export class TrainingEditPageContainer extends React.Component<Props, State> {
+export class TrainingEditPageContainer extends React.Component {
   constructor() {
     super();
 
@@ -490,11 +479,11 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
     this.save = this.save.bind(this);
   }
 
-  public componentDidMount() {
+  componentDidMount() {
     this.fetchTraining();
   }
 
-  private fetchTraining() {
+  fetchTraining() {
     const trainingId = Number(this.props.params.id) || 0;
     trainingAPI.fetchTrainingById(trainingId)
       .then((training) => {
@@ -508,7 +497,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
       });
   }
 
-  private onChange(fieldName, value) {
+  onChange(fieldName, value) {
 +   const error = trainingFormValidations
 +     .validateField(this.state.training, fieldName, value);
 
@@ -524,7 +513,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
     });
   }
 
-  private save(training: Training) {
+  save(training) {
 +   const trainingErrors = trainingFormValidations.validateForm(training);
 +   this.setState({
 +     trainingErrors: {
@@ -545,7 +534,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
 +   }
   }
 
-  public render() {
+  render() {
     return (
       <TrainingEditPage
         training={this.state.training}
@@ -555,6 +544,10 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
       />
     );
   }
+}
+
+TrainingEditPageContainer.propTypes = {
+  params: React.PropTypes.any.isRequired,
 }
 
 ```

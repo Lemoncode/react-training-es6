@@ -19,7 +19,7 @@ export const ValidationComponent = (props) => {
 }
 
 ValidationComponent.propTypes = {
-  error: React.PropTypes.string.isRequired,
+  error: React.PropTypes.string,
   className: React.PropTypes.string,
   children: React.PropTypes.oneOfType([
     React.PropTypes.element,

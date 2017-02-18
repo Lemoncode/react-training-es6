@@ -5,6 +5,7 @@ import {Training} from '../../../models/training';
 import {TrainingErrors} from '../../../models/trainingErrors';
 import {TrainingEditPage} from './page';
 import {trainingAPI} from '../../../rest-api/training/trainingAPI';
+import {trainingFormValidations} from './components/validations/trainingFormValidations';
 
 export class TrainingEditPageContainer extends React.Component {
   constructor() {
@@ -37,24 +38,39 @@ export class TrainingEditPageContainer extends React.Component {
   }
 
   onChange(fieldName, value) {
+    const error = trainingFormValidations
+      .validateField(this.state.training, fieldName, value);
     this.setState({
       training: {
         ...this.state.training,
         [fieldName]: value
-      }
+      },
+      trainingErrors: {
+        ...this.state.trainingErrors,
+        [fieldName]: error,
+      },
     });
   }
 
   save(training) {
-    toastr.remove();
-    trainingAPI.save(training)
-      .then((message) => {
-        toastr.success(message);
-        hashHistory.goBack();
-      })
-      .catch((error) => {
-        toastr.error(error);
-      });
+    const trainingErrors = trainingFormValidations.validateForm(training);
+    this.setState({
+      trainingErrors: {
+        ...trainingErrors,
+      },
+    });
+
+    if(trainingFormValidations.isValidForm(trainingErrors)) {
+      toastr.remove();
+      trainingAPI.save(training)
+        .then((message) => {
+          toastr.success(message);
+          hashHistory.goBack();
+        })
+        .catch((error) => {
+          toastr.error(error);
+        });
+    }
   }
 
   render() {
