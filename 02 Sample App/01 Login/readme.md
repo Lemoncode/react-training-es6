@@ -12,11 +12,11 @@ Summary steps:
 
 ## Steps to build it
 
-- Delete _./src/hello.tsx_ and _./src/helloStyles.css_ files.
+- Delete _./src/hello.jsx_ and _./src/helloStyles.css_ files.
 
 - Create a first version of _Login page_:
 
-### ./src/pages/login/page.tsx
+### ./src/pages/login/page.jsx
 ```javascript
 import * as React from 'react';
 
@@ -37,7 +37,7 @@ export const LoginPage = () => {
 
 ```
 
-- Create _./src/app.tsx_ file like App entry point where calls to pages:
+- Create _./src/app.jsx_ file like App entry point where calls to pages:
 
 ### ./src/appStyles.css
 ```css
@@ -47,7 +47,7 @@ export const LoginPage = () => {
 
 ```
 
-### ./src/app.tsx
+### ./src/app.jsx
 ```javascript
 import * as React from 'react';
 import {LoginPage} from './pages/login/page';
@@ -63,9 +63,9 @@ export const App = () => {
 
 ```
 
-- Update _./src/index.tsx_ to use App component:
+- Update _./src/index.jsx_ to use App component:
 
-### ./src/index.tsx
+### ./src/index.jsx
 ```javascript
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -82,7 +82,7 @@ ReactDOM.render(
 
 - Now, we can start to implement Login Header like:
 
-### ./src/pages/login/components/header.tsx
+### ./src/pages/login/components/header.jsx
 ```javascript
 import * as React from 'react';
 
@@ -101,7 +101,7 @@ export const HeaderComponent = () => {
 
 - And using it in LoginPage
 
-### ./src/pages/login/page.tsx
+### ./src/pages/login/page.jsx
 ```javascript
 import * as React from 'react';
 + import {HeaderComponent} from './components/header';
@@ -126,7 +126,7 @@ export const LoginPage = () => {
 
 - We need a model to bind to our login form like:
 
-### ./src/models/loginCredentials.ts
+### ./src/models/loginCredentials.js
 ```javascript
 export class LoginCredentials {
   login: string;
@@ -142,7 +142,7 @@ export class LoginCredentials {
 
 - And build our _Form Component_:
 
-### ./src/pages/login/components/form.tsx
+### ./src/pages/login/components/form.jsx
 ```javascript
 import * as React from 'react';
 import {LoginCredentials} from '../../../models/loginCredentials';
@@ -203,7 +203,7 @@ export const FormComponent = (props: Props) => {
 
 - Now it's time to give state to our **Login Page** and pass properties to **FormComponent**:
 
-### ./src/pages/login/page.tsx
+### ./src/pages/login/page.jsx
 ```javascript
 import * as React from 'react';
 + import {LoginCredentials} from '../../models/loginCredentials';
@@ -265,7 +265,7 @@ import {HeaderComponent} from './components/header';
 
 - Before we will continue with connecting Login Component with API, we can refactor login form, to apply DRY principle:
 
-### ./src/common/components/form/input.tsx
+### ./src/common/components/form/input.jsx
 
 ```javascript
 import * as React from 'react';
@@ -301,7 +301,7 @@ export const InputComponent = (props: Props) => {
 
 - Now, we can reuse InputComponent:
 
-### ./src/pages/login/components/form.tsx
+### ./src/pages/login/components/form.jsx
 ```javascript
 import * as React from 'react';
 import {LoginCredentials} from '../../../models/loginCredentials';
@@ -380,7 +380,7 @@ export const FormComponent = (props: Props) => {
 
 - First we are going to create UserProfile model:
 
-### ./src/models/userProfile.ts
+### ./src/models/userProfile.js
 ```javascript
 export class UserProfile {
   id: number;
@@ -400,7 +400,7 @@ export class UserProfile {
 
 - Create mock data:
 
-### ./src/rest-api/login/loginMockData.ts
+### ./src/rest-api/login/loginMockData.js
 ```javascript
 import {UserProfile} from '../../models/userProfile';
 
@@ -412,7 +412,7 @@ export const userProfiles: UserProfile[] = [
 
 ```
 
-### ./src/rest-api/login/loginAPI.ts
+### ./src/rest-api/login/loginAPI.js
 ```javascript
 import {LoginCredentials} from '../../models/loginCredentials';
 import {UserProfile} from '../../models/userProfile';
@@ -440,7 +440,7 @@ export const loginAPI = new LoginAPI();
 
 - Now, we can request login in LoginPage using this API:
 
-### ./src/pages/login/page.tsx
+### ./src/pages/login/page.jsx
 ```javascript
 import * as React from 'react';
 + import * as toastr from 'toastr';
@@ -505,7 +505,7 @@ export class LoginPage extends React.Component <{}, State> {
 
 - And update form to has loginRequest property:
 
-### ./src/pages/login/components/form.tsx
+### ./src/pages/login/components/form.jsx
 ```javascript
 import * as React from 'react';
 import {LoginCredentials} from '../../../models/loginCredentials';
@@ -635,7 +635,7 @@ import {FormComponent} from './components/form';
 
 - And LoginPageContainer is the responsible about state and pass properties to LoginPage:
 
-### ./src/pages/login/components/pageContainer.tsx
+### ./src/pages/login/components/pageContainer.jsx
 ```javascript
 import * as React from 'react';
 import * as toastr from 'toastr';
@@ -692,7 +692,7 @@ export class LoginPageContainer extends React.Component <{}, State> {
 
 - And of course, calls LoginPageContainer instead LoginPage in App component:
 
-### ./src/app.tsx
+### ./src/app.jsx
 ```javascript
 import * as React from 'react';
 - import {LoginPage} from './pages/login/page';
