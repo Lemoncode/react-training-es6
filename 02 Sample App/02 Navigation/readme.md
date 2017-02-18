@@ -99,7 +99,7 @@ export const TrainingListPage = () => {
 - For navigate to this component we are define a new route:
 
 ### ./src/common/constants/routeConstants.js
-```javascript
+```diff
 + const trainingRoute = '/training';
 
 export const routeConstants = {
@@ -112,7 +112,7 @@ export const routeConstants = {
 ```
 
 ### ./src/routes.jsx
-```javascript
+```diff
 import * as React from 'react';
 import {Route, IndexRoute} from 'react-router';
 import {routeConstants} from './common/constants/routeConstants';
@@ -139,14 +139,9 @@ import * as toastr from 'toastr';
 + import {routeConstants} from '../../common/constants/routeConstants';
 import {loginAPI} from '../../rest-api/login/loginAPI';
 import {LoginCredentials} from '../../models/loginCredentials';
-import {UserProfile} from '../../models/userProfile';
 import {LoginPage} from './page';
 
-interface State {
-  loginCredentials: LoginCredentials;
-}
-
-export class LoginPageContainer extends React.Component <{}, State> {
+export class LoginPageContainer extends React.Component {
   constructor() {
     super();
 
@@ -166,19 +161,19 @@ export class LoginPageContainer extends React.Component <{}, State> {
   // https://github.com/sebmarkbage/ecmascript-rest-spread
   // http://stackoverflow.com/questions/32925460/spread-operator-vs-object-assign
 
-  private updateLoginInfo(fieldName: string, value: string) {
+  updateLoginInfo(fieldName, value) {
     this.setState({
       loginCredentials: {
         ...this.state.loginCredentials,
         [fieldName]: value,
-      }
+      },
     });
   }
 
-  private loginRequest(loginCredentials: LoginCredentials) {
+  loginRequest(loginCredentials) {
     toastr.remove();
     loginAPI.login(loginCredentials)
-      .then((userProfile: UserProfile) => {
+      .then((userProfile) => {
         toastr.success(`Success login ${userProfile.fullname}`);
 +       hashHistory.push(routeConstants.training.list);
       })
@@ -187,7 +182,7 @@ export class LoginPageContainer extends React.Component <{}, State> {
       });
   }
 
-  public render() {
+  render() {
     return (
       <LoginPage
         loginCredentials={this.state.loginCredentials}
