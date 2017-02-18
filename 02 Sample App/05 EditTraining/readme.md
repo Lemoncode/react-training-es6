@@ -37,7 +37,7 @@ npm install react-modal --save
 - Add libraries as vendor and vendorStyles:
 
 ### ./webpack.config.js
-```javascript
+```diff
 entry: {
   ...
   vendor: [
@@ -76,7 +76,7 @@ export const TrainingEditPage = () => {
 - Add route constant:
 
 ### ./src/common/constants/routeConstants.js
-```javascript
+```diff
 const trainingRoute = '/training';
 
 export const routeConstants = {
@@ -93,7 +93,7 @@ export const routeConstants = {
 - And route:
 
 ### ./src/routes.jsx
-```javascript
+```diff
 import * as React from 'react';
 import {Route, IndexRoute} from 'react-router';
 import {routeConstants} from './common/constants/routeConstants';
@@ -115,23 +115,20 @@ export const AppRoutes = (
 - Finally, update _TrainingRowComponent_ to navigate to TrainingEditPage by training Id:
 
 ### ./src/pages/training/list/components/trainingRow.jsx
-```javascript
+```diff
 import * as React from 'react';
 + import {Link} from 'react-router';
 import {Training} from '../../../../models/training';
-import {TableRowProps, TableRowComponent} from '../../../../common/components/tableRow';
-const classNames: any = require('./trainingRowStyles');
+import {TableRowComponent} from '../../../../common/components/tableRow';
+import classNames from './trainingRowStyles';
 + import {routeConstants} from '../../../../common/constants/routeConstants';
 
 // https://github.com/bvaughn/react-virtualized/blob/master/docs/Table.md
 // https://github.com/bvaughn/react-virtualized/blob/master/source/Table/defaultRowRenderer.js
-interface Props extends TableRowProps {
-  rowData: Training;
-}
 
 // We can use spread operator for React properties too
 // https://facebook.github.io/react/docs/jsx-in-depth.html#spread-attributes
-export const TrainingRowComponent = (props: Props) => {
+export const TrainingRowComponent = (props) => {
   return (
     <TableRowComponent
       {...props}
@@ -152,7 +149,7 @@ export const TrainingRowComponent = (props: Props) => {
     </TableRowComponent>
   );
 }
-
+...
 ```
 
 - Once we have navigation, we can start with creating _TrainingFormComponent_.

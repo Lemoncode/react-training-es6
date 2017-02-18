@@ -1,6 +1,8 @@
 import * as React from 'react';
+import {Link} from 'react-router';
 import {TableRowComponent} from '../../../../common/components/tableRow';
 import classNames from './trainingRowStyles';
+import {routeConstants} from '../../../../common/constants/routeConstants';
 
 // https://github.com/bvaughn/react-virtualized/blob/master/docs/Table.md
 // https://github.com/bvaughn/react-virtualized/blob/master/source/Table/defaultRowRenderer.js
@@ -18,7 +20,12 @@ export const TrainingRowComponent = (props) => {
       <input type="checkbox" checked={props.rowData.isActive} disabled/>
       <span>{props.rowData.name}</span>
       <a href={props.rowData.url} target="blank">{props.rowData.url}</a>
-      <a className=" btn btn-primary"><i className="glyphicon glyphicon-pencil" /></a>
+      <Link
+        to={`${routeConstants.training.edit}/${props.rowData.id}`}
+        className=" btn btn-primary"
+      >
+        <i className="glyphicon glyphicon-pencil" />
+      </Link>
     </TableRowComponent>
   );
 }
