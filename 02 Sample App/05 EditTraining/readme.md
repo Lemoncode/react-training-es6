@@ -16,29 +16,28 @@ Summary steps:
 
 ## Steps to build it
 
-- Install [react-infinite-calendar](https://github.com/clauderic/react-infinite-calendar) and [react-addons-css-transition-group](https://www.npmjs.com/package/react-addons-css-transition-group) dependency. This library has not typings, so we have to import using [webpack-env](https://www.npmjs.com/package/@types/webpack-env) `require` method:
+- Install [react-infinite-calendar](https://github.com/clauderic/react-infinite-calendar) and [react-addons-css-transition-group](https://www.npmjs.com/package/react-addons-css-transition-group) dependency:
 
 ```
 npm install react-infinite-calendar react-addons-css-transition-group --save
 ```
 
-- Install [moment](https://github.com/moment/moment) to work with Dates. This library has typings for TypeScript:
+- Install [moment](https://github.com/moment/moment) to work with Dates:
 
 ```
 npm install moment --save
 ```
 
-- Install [react-modal](https://github.com/reactjs/react-modal) and typings to open calendar as modal window:
+- Install [react-modal](https://github.com/reactjs/react-modal) to open calendar as modal window:
 
 ```
 npm install react-modal --save
-npm install @types/react-modal --save-dev
 ```
 
 - Add libraries as vendor and vendorStyles:
 
 ### ./webpack.config.js
-```javascript
+```diff
 entry: {
   ...
   vendor: [
@@ -61,7 +60,7 @@ entry: {
 
 - We can start to create a blank TrainingEditPage, to work with navigation:
 
-### ./src/pages/training/edit/page.tsx
+### ./src/pages/training/edit/page.jsx
 
 ```javascript
 import * as React from 'react';
@@ -76,8 +75,8 @@ export const TrainingEditPage = () => {
 
 - Add route constant:
 
-### ./src/common/constants/routeConstants.ts
-```javascript
+### ./src/common/constants/routeConstants.js
+```diff
 const trainingRoute = '/training';
 
 export const routeConstants = {
@@ -93,8 +92,8 @@ export const routeConstants = {
 
 - And route:
 
-### ./src/routes.tsx
-```javascript
+### ./src/routes.jsx
+```diff
 import * as React from 'react';
 import {Route, IndexRoute} from 'react-router';
 import {routeConstants} from './common/constants/routeConstants';
@@ -115,24 +114,21 @@ export const AppRoutes = (
 
 - Finally, update _TrainingRowComponent_ to navigate to TrainingEditPage by training Id:
 
-### ./src/pages/training/list/components/trainingRow.tsx
-```javascript
+### ./src/pages/training/list/components/trainingRow.jsx
+```diff
 import * as React from 'react';
 + import {Link} from 'react-router';
 import {Training} from '../../../../models/training';
-import {TableRowProps, TableRowComponent} from '../../../../common/components/tableRow';
-const classNames: any = require('./trainingRowStyles');
+import {TableRowComponent} from '../../../../common/components/tableRow';
+import classNames from './trainingRowStyles';
 + import {routeConstants} from '../../../../common/constants/routeConstants';
 
 // https://github.com/bvaughn/react-virtualized/blob/master/docs/Table.md
 // https://github.com/bvaughn/react-virtualized/blob/master/source/Table/defaultRowRenderer.js
-interface Props extends TableRowProps {
-  rowData: Training;
-}
 
 // We can use spread operator for React properties too
 // https://facebook.github.io/react/docs/jsx-in-depth.html#spread-attributes
-export const TrainingRowComponent = (props: Props) => {
+export const TrainingRowComponent = (props) => {
   return (
     <TableRowComponent
       {...props}
@@ -153,40 +149,17 @@ export const TrainingRowComponent = (props: Props) => {
     </TableRowComponent>
   );
 }
-
+...
 ```
 
 - Once we have navigation, we can start with creating _TrainingFormComponent_.
-  We're going to move input component to _./src/common/components/form_ folder because we'll create some form components
-  and group them in this folder.
+  We're going to start with form components:
 
-### ./src/pages/login/components/form.tsx
-```javascript
-import * as React from 'react';
-import {LoginCredentials} from '../../../models/loginCredentials';
-- import {InputComponent} from '../../../common/components/input';
-+ import {InputComponent} from '../../../common/components/form/input';
-
-```
-
-### ./src/common/components/form/input.tsx
-```javascript
+### ./src/common/components/form/input.jsx
+```diff
 import * as React from 'react';
 
-- interface Props {
-+ export interface InputProps {
-  label: string;
-  name: string;
-  type: string;
-  value: string;
-  placeholder?: string;
-  onChange: any;
-+ className?: string;
-+ disabled?: boolean;
-}
-
-- export const InputComponent = (props: Props) => {
-+ export const InputComponent = (props: InputProps) => {
+export const InputComponent = (props) => {
   return (
 -   <div className="form-group">
 +   <div className={`form-group ${props.className}`}>
@@ -207,20 +180,24 @@ import * as React from 'react';
   );
 }
 
-```
-
-### ./src/common/components/form/inputButton.tsx
-```javascript
-import * as React from 'react';
-import {InputProps} from './input';
-
-interface Props extends InputProps {
-  onClick: () => void;
-  buttonClassName: string;
-  icon: string;
+InputComponent.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired,
+  type: React.PropTypes.string.isRequired,
+  value: React.PropTypes.string.isRequired,
+  placeholder: React.PropTypes.string,
+  onChange: React.PropTypes.func.isRequired,
++ className: React.PropTypes.string,
++ disabled: React.PropTypes.bool,
 }
 
-export const InputButtonComponent = (props: Props) => {
+```
+
+### ./src/common/components/form/inputButton.jsx
+```javascript
+import * as React from 'react';
+
+export const InputButtonComponent = (props) => {
   return (
     <div className={`form-group ${props.className}`}>
       <label htmlFor={props.name}>
@@ -247,21 +224,27 @@ export const InputButtonComponent = (props: Props) => {
   );
 };
 
+InputButtonComponent.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired,
+  type: React.PropTypes.string.isRequired,
+  value: React.PropTypes.string.isRequired,
+  placeholder: React.PropTypes.string,
+  onChange: React.PropTypes.func.isRequired,
+  className: React.PropTypes.string,
+  disabled: React.PropTypes.bool,
+  onClick: React.PropTypes.func.isRequired,
+  buttonClassName: React.PropTypes.string.isRequired,
+  icon: React.PropTypes.string.isRequired,
+}
+
 ```
 
-### ./src/common/components/form/checkbox.tsx
+### ./src/common/components/form/checkBox.jsx
 ```javascript
 import * as React from 'react';
 
-interface Props {
-  label: string;
-  name: string;
-  value: boolean;
-  onChange: any;
-  className?: string;
-}
-
-export const CheckBoxComponent = (props: Props) => {
+export const CheckBoxComponent = (props) => {
   return (
     <div className={`checkbox ${props.className}`}>
       <label htmlFor={props.name}>
@@ -278,26 +261,27 @@ export const CheckBoxComponent = (props: Props) => {
   );
 }
 
+CheckBoxComponent.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired,
+  value: React.PropTypes.bool.isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  className: React.PropTypes.string,
+}
+
 ```
 
 - Building TrainingFormComponent:
 
-### ./src/pages/training/edit/components/trainingForm.tsx
+### ./src/pages/training/edit/components/trainingForm.jsx
 ```javascript
 import * as React from 'react';
-import * as moment from 'moment';
-import {Training} from '../../../../models/training';
+import moment from 'moment';
 import {InputComponent} from '../../../../common/components/form/input';
 import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
 import {InputButtonComponent} from '../../../../common/components/form/inputButton';
 
-interface Props {
-  training: Training;
-  onChange: (fieldName: string, value: any) => void;
-  save: (training: Training) => void;
-}
-
-export class TrainingFormComponent extends React.Component<Props, {}> {
+export class TrainingFormComponent extends React.Component {
   constructor() {
     super();
 
@@ -307,7 +291,7 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
     this.save = this.save.bind(this);
   }
 
-  private onChange (event) {
+  onChange (event) {
     const fieldName = event.target.name;
     const value = event.target.type === 'checkbox' ?
       event.target.checked :
@@ -316,27 +300,27 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
     this.props.onChange(fieldName, value);
   }
 
-  private onChangeStartDate(date: moment.Moment) {
+  onChangeStartDate(date) {
     this.onChangeDate('startDate', date);
     this.toggleOpenStartDateModal();
   }
 
-  private onChangeEndDate(date: moment.Moment) {
+  onChangeEndDate(date) {
     this.onChangeDate('endDate', date);
     this.toggleOpenEndDateModal();
   }
 
-  private onChangeDate(fieldName: string, date: moment.Moment) {
+  onChangeDate(fieldName, date) {
     const milliseconds = date.valueOf();
     this.props.onChange(fieldName, milliseconds);
   }
 
-  private save(event) {
+  save(event) {
     event.preventDefault();
     this.props.save(this.props.training);
   }
 
-  public render() {
+  render() {
     return (
       <form className="container">
         <div className="row">
@@ -372,7 +356,7 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {})}
+            onClick={() => {}}
             icon="glyphicon glyphicon-calendar"
           />
 
@@ -386,7 +370,7 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {})}
+            onClick={() => {}}
             icon="glyphicon glyphicon-calendar"
           />
         </div>
@@ -415,25 +399,45 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
   }
 };
 
+TrainingFormComponent.propTypes = {
+  training: React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    url: React.PropTypes.string.isRequired,
+    startDate: React.PropTypes.number.isRequired,
+    endDate: React.PropTypes.number.isRequired,
+    isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  save: React.PropTypes.func.isRequired,
+}
+
+```
+
+- We can use it in _TrainingEditPage_ to see how our form is going on:
+
+### ./src/pages/training/edit/page.jsx
+```diff
+import * as React from 'react';
++ import {TrainingFormComponent} from './components/trainingForm';
+
+export const TrainingEditPage = () => {
+  return (
+    <div>Training Edit page</div>
+  );
+}
+
 ```
 
 - Now it's time to create the _DatePickerModalComponent_:
 
-### ./src/common/components/datePickerModal/datePickerModal.tsx
+### ./src/common/components/datePickerModal/datePickerModal.jsx
 ```javascript
 import * as React from 'react';
-import * as Modal from 'react-modal';
-import {Moment} from 'moment';
-const classNames: any = require('./datePickerModalStyles');
+import Modal from 'react-modal';
+import classNames from './datePickerModalStyles';
 
-interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  selectedDate: number;
-  onChange: (selectedDate: Moment) => void;
-}
-
-export const DatePickerModalComponent = (props: Props) => {
+export const DatePickerModalComponent = (props) => {
   return (
     <Modal
       isOpen={props.isOpen}
@@ -446,6 +450,13 @@ export const DatePickerModalComponent = (props: Props) => {
     </Modal>
   );
 };
+
+DatePickerModalComponent.propTypes = {
+  isOpen: React.PropTypes.bool.isRequired,
+  onClose: React.PropTypes.func.isRequired,
+  selectedDate: React.PropTypes.number.isRequired,
+  onChange: React.PropTypes.func.isRequired,
+}
 
 ```
 
@@ -469,22 +480,55 @@ export const DatePickerModalComponent = (props: Props) => {
 
 ```
 
-### ./src/common/components/datePickerModal/components/datePicker.tsx
-```javascript
-import * as React from 'react';
-import {Moment} from 'moment';
-import {AutoSizer} from 'react-virtualized';
-const ReactCalendar: any = require('react-infinite-calendar');
-const InfiniteCalendar = ReactCalendar.default;
-const classNames: any = require('./datePickerStyles');
+- How it looks like:
 
-interface Props {
-  onClose: () => void;
-  selectedDate: number;
-  onChange: (selectedDate: Moment) => void;
+### ./src/common/components/datePickerModal/index.js
+```javascript
+import {DatePickerModalComponent} from './datePickerModal';
+
+export {
+  DatePickerModalComponent,
 }
 
-export const DatePickerComponent = (props: Props) => {
+```
+
+### ./src/pages/training/edit/components/trainingForm.jsx
+```diff
++ import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
+...
+    <InputButtonComponent
+      className="col-md-6"
+      type="text"
+      label="Start date"
+      name="startDate"
+      placeholder="Start date"
+      value={moment(this.props.training.startDate).format('YYYY-MM-DD')}
+      onChange={this.onChange}
+      disabled
+      buttonClassName="btn btn-default"
+      onClick={() => {}}
+      icon="glyphicon glyphicon-calendar"
+    />
+
++   <DatePickerModalComponent
++     isOpen={true}
++     onClose={() => {}}
++     selectedDate={0}
++     onChange={() => {}}
++   />
+
+...
+```
+
+### ./src/common/components/datePickerModal/components/datePicker.jsx
+```javascript
+import * as React from 'react';
+import {AutoSizer} from 'react-virtualized';
+import InfiniteCalendar from 'react-infinite-calendar';
+import classNames from './datePickerStyles';
+
+// https://github.com/clauderic/react-infinite-calendar/issues/60
+export const DatePickerComponent = (props) => {
   return (
     <AutoSizer>
     {
@@ -510,6 +554,12 @@ export const DatePickerComponent = (props: Props) => {
   );
 };
 
+DatePickerComponent.propTypes = {
+  onClose: React.PropTypes.func.isRequired,
+  selectedDate: React.PropTypes.number.isRequired,
+  onChange: React.PropTypes.func.isRequired,
+}
+
 ```
 
 ### ./src/common/components/datePickerModal/components/datePickerStyles.css
@@ -525,22 +575,14 @@ export const DatePickerComponent = (props: Props) => {
 
 - Updating _DatePickerModalComponent_:
 
-### ./src/common/components/datePickerModal/datePickerModal.tsx
-```javascript
+### ./src/common/components/datePickerModal/datePickerModal.jsx
+```diff
 import * as React from 'react';
-import * as Modal from 'react-modal';
-import {Moment} from 'moment';
+import Modal from 'react-modal';
 + import {DatePickerComponent} from './components/datePicker';
-const classNames: any = require('./datePickerModalStyles');
+import classNames from './datePickerModalStyles';
 
-interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  selectedDate: number;
-  onChange: (selectedDate: Moment) => void;
-}
-
-export const DatePickerModalComponent = (props: Props) => {
+export const DatePickerModalComponent = (props) => {
   return (
     <Modal
       isOpen={props.isOpen}
@@ -549,20 +591,28 @@ export const DatePickerModalComponent = (props: Props) => {
       className={`${classNames.modal} modal-dialog modal-open`}
       overlayClassName={classNames.overlay}
     >
-      <DatePickerComponent
-        onClose={props.onClose}
-        selectedDate={props.selectedDate}
-        onChange={props.onChange}
-      />
+-     <h1>This is a modal</h1>
++     <DatePickerComponent
++       onClose={props.onClose}
++       selectedDate={props.selectedDate}
++       onChange={props.onChange}
++     />
     </Modal>
   );
 };
+
+DatePickerModalComponent.propTypes = {
+  isOpen: React.PropTypes.bool.isRequired,
+  onClose: React.PropTypes.func.isRequired,
+  selectedDate: React.PropTypes.number.isRequired,
+  onChange: React.PropTypes.func.isRequired,
+}
 
 ```
 
 - Extract date format to a constants:
 
-### ./src/common/constants/formatConstants.ts
+### ./src/common/constants/formatConstants.js
 ```javascript
 export const formatConstants = {
   shortDate: 'YYYY-MM-DD',
@@ -572,30 +622,17 @@ export const formatConstants = {
 
 - Updating _TrainingFormComponent_:
 
-### ./src/pages/training/edit/components/trainingForm.tsx
-```javascript
+### ./src/pages/training/edit/components/trainingForm.jsx
+```diff
 import * as React from 'react';
-import * as moment from 'moment';
-import {Training} from '../../../../models/training';
+import moment from 'moment';
 import {InputComponent} from '../../../../common/components/form/input';
 import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
 import {InputButtonComponent} from '../../../../common/components/form/inputButton';
-+ import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
+import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
 + import {formatConstants} from '../../../../common/constants/formatConstants';
 
-interface Props {
-  training: Training;
-  onChange: (fieldName: string, value: any) => void;
-  save: (training: Training) => void;
-}
-
-+ interface State {
-+  isOpenStartDateModal: boolean;
-+  isOpenEndDateModal: boolean;
-+}
-
-- export class TrainingFormComponent extends React.Component<Props, {}> {
-+ export class TrainingFormComponent extends React.Component<Props, State> {
+export class TrainingFormComponent extends React.Component {
   constructor() {
     super();
 
@@ -612,7 +649,7 @@ interface Props {
     this.save = this.save.bind(this);
   }
 
-  private onChange (event) {
+  onChange (event) {
     const fieldName = event.target.name;
     const value = event.target.type === 'checkbox' ?
       event.target.checked :
@@ -621,42 +658,42 @@ interface Props {
     this.props.onChange(fieldName, value);
   }
 
-  private onChangeStartDate(date: moment.Moment) {
+  onChangeStartDate(date) {
     this.onChangeDate('startDate', date);
     this.toggleOpenStartDateModal();
   }
 
-  private onChangeEndDate(date: moment.Moment) {
+  onChangeEndDate(date) {
     this.onChangeDate('endDate', date);
     this.toggleOpenEndDateModal();
   }
 
-  private onChangeDate(fieldName: string, date: moment.Moment) {
+  onChangeDate(fieldName, date) {
     const milliseconds = date.valueOf();
     this.props.onChange(fieldName, milliseconds);
   }
 
-+ private toggleOpenStartDateModal() {
++ toggleOpenStartDateModal() {
 +   this.toggleOpenModal('isOpenStartDateModal');
 + }
 
-+ private toggleOpenEndDateModal() {
++ toggleOpenEndDateModal() {
 +   this.toggleOpenModal('isOpenEndDateModal');
 + }
 
-+ private toggleOpenModal(fieldName) {
++ toggleOpenModal(fieldName) {
 +   this.setState({
 +     ...this.state,
 +     [fieldName]: !this.state[fieldName]
 +   });
 + }
 
-  private save(event) {
+  save(event) {
     event.preventDefault();
     this.props.save(this.props.training);
   }
 
-  public render() {
+  render() {
     return (
       <form className="container">
         <div className="row">
@@ -688,20 +725,26 @@ interface Props {
             label="Start date"
             name="startDate"
             placeholder="Start date"
-            value={moment(this.props.training.startDate).format('YYYY-MM-DD')}
+-           value={moment(this.props.training.startDate).format('YYYY-MM-DD')}
++           value={moment(this.props.training.startDate).format(formatConstants.shortDate)}
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {})}
+-           onClick={() => {}}
++           onClick={this.toggleOpenStartDateModal}
             icon="glyphicon glyphicon-calendar"
           />
 
-+         <DatePickerModalComponent
+          <DatePickerModalComponent
+-           isOpen={true}
 +           isOpen={this.state.isOpenStartDateModal}
+-           onClose={() => {}}
 +           onClose={this.toggleOpenStartDateModal}
+-           selectedDate={0}
 +           selectedDate={this.props.training.startDate}
+-           onChange={() => {}}
 +           onChange={this.onChangeStartDate}
-+         />
+          />
 
           <InputButtonComponent
             className="col-md-6"
@@ -709,11 +752,13 @@ interface Props {
             label="End date"
             name="endDate"
             placeholder="End date"
-            value={moment(this.props.training.endDate).format('YYYY-MM-DD')}
+-           value={moment(this.props.training.endDate).format('YYYY-MM-DD')}
++           value={moment(this.props.training.endDate).format(formatConstants.shortDate)}
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {})}
+-           onClick={() => {}}
++           onClick={this.toggleOpenEndDateModal}
             icon="glyphicon glyphicon-calendar"
           />
 
@@ -749,46 +794,58 @@ interface Props {
   }
 };
 
+TrainingFormComponent.propTypes = {
+  training: React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    url: React.PropTypes.string.isRequired,
+    startDate: React.PropTypes.number.isRequired,
+    endDate: React.PropTypes.number.isRequired,
+    isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  save: React.PropTypes.func.isRequired,
+}
+
 ```
 
 - Before start using TrainingFormComponent, we are going to update trainingAPI:
 
-### ./src/rest-api/training/trainingAPI.ts
+### ./src/rest-api/training/trainingAPI.js
 
-```javascript
-import {Training} from '../../models/training';
+```diff
 import {trainingsMockData} from './trainingMockData';
 
-// Fake API using es6 Promises polyfill (with core-js).
+// Fake API using es6 Promises polyfill (with babel-preset-env).
 // In future, we can replace by real one.
 class TrainingAPI {
-+ private trainings: Training[];
++ trainings;
 
 + constructor() {
 +   this.trainings = trainingsMockData;
 + }
 
-  public fetchTrainings(): Promise<Training[]> {
+  fetchTrainings() {
 -   return Promise.resolve(trainingsMockData);
 +   return Promise.resolve(this.trainings);
   }
 
-+ public fetchTrainingById(id: number): Promise<Training> {
++ fetchTrainingById(id) {
 +   const training = this.trainings.find(t => t.id === id);
 +   return Promise.resolve(training);
 + }
 
-+ public save(training: Training): Promise<string> {
++ save(training) {
 +   const index = this.trainings.findIndex(t => t.id === training.id);
 +
 +   return index >= 0 ?
 +     this.saveTrainingByIndex(index, training) :
-+     Promise.reject<string>('Something was wrong saving training :(');
++     Promise.reject('Something was wrong saving training :(');
 + }
 
 + // Just ensure no mutable data. Copy in new Array all items but replacing
 + // object to update by training from params.
-+ private saveTrainingByIndex(index, training) {
++ saveTrainingByIndex(index, training) {
 +   this.trainings = [
 +     ...this.trainings.slice(0, index),
 +     training,
@@ -805,7 +862,7 @@ export const trainingAPI = new TrainingAPI();
 
 - Create _TrainingEditPageContainer_:
 
-### ./src/pages/training/edit/pageContainer.tsx
+### ./src/pages/training/edit/pageContainer.jsx
 ```javascript
 import * as React from 'react';
 import * as toastr from 'toastr';
@@ -814,15 +871,7 @@ import {Training} from '../../../models/training';
 import {TrainingEditPage} from './page';
 import {trainingAPI} from '../../../rest-api/training/trainingAPI';
 
-interface Props {
-  params: any
-}
-
-interface State {
-  training: Training;
-}
-
-export class TrainingEditPageContainer extends React.Component<Props, State> {
+export class TrainingEditPageContainer extends React.Component {
   constructor() {
     super();
 
@@ -833,11 +882,11 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
     this.save = this.save.bind(this);
   }
 
-  public componentDidMount() {
+  componentDidMount() {
     this.fetchTraining();
   }
 
-  private fetchTraining() {
+  fetchTraining() {
     const trainingId = Number(this.props.params.id) || 0;
     trainingAPI.fetchTrainingById(trainingId)
       .then((training) => {
@@ -851,7 +900,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
       });
   }
 
-  private onChange(fieldName, value) {
+  onChange(fieldName, value) {
     this.setState({
       training: {
         ...this.state.training,
@@ -860,7 +909,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
     });
   }
 
-  private save(training: Training) {
+  save(training) {
     toastr.remove();
     trainingAPI.save(training)
       .then((message) => {
@@ -872,7 +921,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
       });
   }
 
-  public render() {
+  render() {
     return (
       <TrainingEditPage
         training={this.state.training}
@@ -883,12 +932,16 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
   }
 }
 
+TrainingEditPageContainer.propTypes = {
+  params: React.PropTypes.any.isRequired,
+}
+
 ```
 
 - Update route:
 
-### ./src/routes.tsx
-```javascript
+### ./src/routes.jsx
+```diff
 import * as React from 'react';
 import {Route, IndexRoute} from 'react-router';
 import {routeConstants} from './common/constants/routeConstants';
@@ -911,23 +964,20 @@ export const AppRoutes = (
 
 - Update _TrainingEditPage_:
 
-### ./src/pages/training/edit/page.tsx
+### ./src/pages/training/edit/page.jsx
 
-```javascript
+```diff
 import * as React from 'react';
-+ import {Training} from '../../../models/training';
-+ import {TrainingFormComponent} from './components/trainingForm';
-
-+ interface Props {
-+   training: Training;
-+   onChange: (fieldName: string, value: any) => void;
-+   save: (training: Training) => void;
-+ }
+import {TrainingFormComponent} from './components/trainingForm';
 
 - export const TrainingEditPage = () => {
-+ export const TrainingEditPage = (props: Props) => {
++ export const TrainingEditPage = (props) => {
     return (
--     <div>Training Edit page</div>
+-     <TrainingFormComponent
+-       training={new Training()}
+-      onChange={() => {}}
+-       save={() => {}}
+-     />
 +     <div>
 +       <h2 className="jumbotron">Edit Training</h2>
 +       <TrainingFormComponent
@@ -939,42 +989,35 @@ import * as React from 'react';
     );
   }
 
++ TrainingEditPage.propTypes = {
++   training: React.PropTypes.shape({
++     id: React.PropTypes.number.isRequired,
++     name: React.PropTypes.string.isRequired,
++     url: React.PropTypes.string.isRequired,
++     startDate: React.PropTypes.number.isRequired,
++     endDate: React.PropTypes.number.isRequired,
++     isActive: React.PropTypes.bool.isRequired,
++   }).isRequired,
++   onChange: React.PropTypes.func.isRequired,
++   save: React.PropTypes.func.isRequired,
++ }
+
 ```
 
 - Too much lines on _TrainingFormComponent_? Ok, let's go to create container:
 
-### ./src/pages/training/edit/components/trainingForm.tsx
-```javascript
+### ./src/pages/training/edit/components/trainingForm.jsx
+```diff
 import * as React from 'react';
-import * as moment from 'moment';
-import {Training} from '../../../../models/training';
+import moment from 'moment';
 import {InputComponent} from '../../../../common/components/form/input';
 import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
 import {InputButtonComponent} from '../../../../common/components/form/inputButton';
 import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
 import {formatConstants} from '../../../../common/constants/formatConstants';
 
-interface Props {
-  training: Training;
-- onChange: (fieldName: string, value: any) => void;
-+ onChange: (event) => void;
-- save: (training: Training) => void;
-+ save: (event) => void;
-+ isOpenStartDateModal: boolean;
-+ toggleOpenStartDateModal: () => void;
-+ onChangeStartDate: (date: moment.Moment) => void;
-+ isOpenEndDateModal: boolean;
-+ toggleOpenEndDateModal: () => void;
-+ onChangeEndDate: (date: moment.Moment) => void;
-}
-
-- interface State {
--   isOpenStartDateModal: boolean;
--   isOpenEndDateModal: boolean;
-- }
-
-- export class TrainingFormComponent extends React.Component<Props, State> {
-+  export const TrainingFormComponent = (props: Props) => {
+- export class TrainingFormComponent extends React.Component {
++ export const TrainingFormComponent = (props) => {
 -   constructor() {
 -     super();
 
@@ -991,7 +1034,7 @@ interface Props {
 -     this.save = this.save.bind(this);
 -   }
 
--   private onChange (event) {
+-   onChange (event) {
 -     const fieldName = event.target.name;
 -     const value = event.target.type === 'checkbox' ?
 -       event.target.checked :
@@ -1000,42 +1043,42 @@ interface Props {
 -     this.props.onChange(fieldName, value);
 -   }
 
--   private onChangeStartDate(date: moment.Moment) {
+-   onChangeStartDate(date: moment.Moment) {
 -     this.onChangeDate('startDate', date);
 -     this.toggleOpenStartDateModal();
 -   }
 
--   private onChangeEndDate(date: moment.Moment) {
+-   onChangeEndDate(date: moment.Moment) {
 -     this.onChangeDate('endDate', date);
 -     this.toggleOpenEndDateModal();
 -   }
 
--   private onChangeDate(fieldName: string, date: moment.Moment) {
+-   onChangeDate(fieldName: string, date: moment.Moment) {
 -     const milliseconds = date.valueOf();
 -     this.props.onChange(fieldName, milliseconds);
 -   }
 
--   private toggleOpenStartDateModal() {
+-   toggleOpenStartDateModal() {
 -     this.toggleOpenModal('isOpenStartDateModal');
 -   }
 
--   private toggleOpenEndDateModal() {
+-   toggleOpenEndDateModal() {
 -     this.toggleOpenModal('isOpenEndDateModal');
 -   }
 
--   private toggleOpenModal(fieldName) {
+-   toggleOpenModal(fieldName) {
 -     this.setState({
 -       ...this.state,
 -       [fieldName]: !this.state[fieldName]
 -     });
 -   }
 
--   private save(event) {
+-   save(event) {
 -     event.preventDefault();
 -     this.props.save(this.props.training);
 -   }
 
--   public render() {
+-   render() {
       return (
         <form className="container">
           <div className="row">
@@ -1112,7 +1155,7 @@ interface Props {
 
             <DatePickerModalComponent
 -             isOpen={this.state.isOpenEndDateModal}
-              isOpen={props.isOpenEndDateModal}
++             isOpen={props.isOpenEndDateModal}
 -             onClose={this.toggleOpenEndDateModal}
 +             onClose={props.toggleOpenEndDateModal}
 -             selectedDate={this.props.training.endDate}
@@ -1153,29 +1196,35 @@ interface Props {
     }
   };
 
+  TrainingFormComponent.propTypes = {
+    training: React.PropTypes.shape({
+      id: React.PropTypes.number.isRequired,
+      name: React.PropTypes.string.isRequired,
+      url: React.PropTypes.string.isRequired,
+      startDate: React.PropTypes.number.isRequired,
+      endDate: React.PropTypes.number.isRequired,
+      isActive: React.PropTypes.bool.isRequired,
+    }).isRequired,
+    onChange: React.PropTypes.func.isRequired,
+    save: React.PropTypes.func.isRequired,
++   isOpenStartDateModal: React.PropTypes.bool.isRequired,
++   toggleOpenStartDateModal: React.PropTypes.func.isRequired,
++   onChangeStartDate: React.PropTypes.func.isRequired,
++   isOpenEndDateModal: React.PropTypes.bool.isRequired,
++   toggleOpenEndDateModal: React.PropTypes.func.isRequired,
++   onChangeEndDate: React.PropTypes.func.isRequired,
+  }
+
 ```
 
 - Create _TrainingFormComponentContainer_:
 
-### ./src/pages/training/edit/components/trainingFormContainer.tsx
+### ./src/pages/training/edit/components/trainingFormContainer.jsx
 ```javascript
 import * as React from 'react';
-import * as moment from 'moment';
-import {Training} from '../../../../models/training';
 import {TrainingFormComponent} from './trainingForm';
 
-interface Props {
-  training: Training;
-  onChange: (fieldName: string, value: any) => void;
-  save: (training: Training) => void;
-}
-
-interface State {
-  isOpenStartDateModal: boolean;
-  isOpenEndDateModal: boolean;
-}
-
-export class TrainingFormComponentContainer extends React.Component<Props, State> {
+export class TrainingFormComponentContainer extends React.Component {
   constructor() {
     super();
 
@@ -1192,7 +1241,7 @@ export class TrainingFormComponentContainer extends React.Component<Props, State
     this.save = this.save.bind(this);
   }
 
-  private onChange (event) {
+  onChange (event) {
     const fieldName = event.target.name;
     const value = event.target.type === 'checkbox' ?
       event.target.checked :
@@ -1201,42 +1250,42 @@ export class TrainingFormComponentContainer extends React.Component<Props, State
     this.props.onChange(fieldName, value);
   }
 
-  private onChangeStartDate(date: moment.Moment) {
+  onChangeStartDate(date) {
     this.onChangeDate('startDate', date);
     this.toggleOpenStartDateModal();
   }
 
-  private onChangeEndDate(date: moment.Moment) {
+  onChangeEndDate(date) {
     this.onChangeDate('endDate', date);
     this.toggleOpenEndDateModal();
   }
 
-  private onChangeDate(fieldName: string, date: moment.Moment) {
+  onChangeDate(fieldName, date) {
     const milliseconds = date.valueOf();
     this.props.onChange(fieldName, milliseconds);
   }
 
-  private toggleOpenStartDateModal() {
+  toggleOpenStartDateModal() {
     this.toggleOpenModal('isOpenStartDateModal');
   }
 
-  private toggleOpenEndDateModal() {
+  toggleOpenEndDateModal() {
     this.toggleOpenModal('isOpenEndDateModal');
   }
 
-  private toggleOpenModal(fieldName) {
+  toggleOpenModal(fieldName) {
     this.setState({
       ...this.state,
       [fieldName]: !this.state[fieldName]
     });
   }
 
-  private save(event) {
+  save(event) {
     event.preventDefault();
     this.props.save(this.props.training);
   }
 
-  public render() {
+  render() {
     return (
       <TrainingFormComponent
         training={this.props.training}
@@ -1253,24 +1302,32 @@ export class TrainingFormComponentContainer extends React.Component<Props, State
   }
 };
 
+TrainingFormComponentContainer.propTypes = {
+  training: React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    url: React.PropTypes.string.isRequired,
+    startDate: React.PropTypes.number.isRequired,
+    endDate: React.PropTypes.number.isRequired,
+    isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  save: React.PropTypes.func.isRequired,
+}
+
 ```
 
 - Update _TrainingEditPage_:
 
-### ./src/pages/training/edit/page.tsx
-```javascript
+### ./src/pages/training/edit/page.jsx
+```diff
 import * as React from 'react';
 import {Training} from '../../../models/training';
 - import {TrainingFormComponent} from './components/trainingForm';
 + import {TrainingFormComponentContainer} from './components/trainingFormContainer';
 
-interface Props {
-  training: Training;
-  onChange: (fieldName: string, value: any) => void;
-  save: (training: Training) => void;
-}
 
-export const TrainingEditPage = (props: Props) => {
+export const TrainingEditPage = (props) => {
   return (
     <div>
       <h2 className="jumbotron">Edit Training</h2>
@@ -1282,6 +1339,19 @@ export const TrainingEditPage = (props: Props) => {
       />
     </div>
   );
+}
+
+TrainingEditPage.propTypes = {
+  training: React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    url: React.PropTypes.string.isRequired,
+    startDate: React.PropTypes.number.isRequired,
+    endDate: React.PropTypes.number.isRequired,
+    isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  save: React.PropTypes.func.isRequired,
 }
 
 ```

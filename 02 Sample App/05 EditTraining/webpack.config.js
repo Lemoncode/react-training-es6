@@ -18,11 +18,16 @@ module.exports = {
       'toastr',
       'react-addons-shallow-compare',
       'react-virtualized',
+      'react-infinite-calendar',
+      'react-addons-css-transition-group',
+      'moment',
+      'react-modal',
     ],
     vendorStyles: [
       '../node_modules/bootstrap/dist/css/bootstrap.css',
       '../node_modules/toastr/build/toastr.css',
       '../node_modules/react-virtualized/styles.css',
+      '../node_modules/react-infinite-calendar/styles.css',
     ],
   },
   output: {
