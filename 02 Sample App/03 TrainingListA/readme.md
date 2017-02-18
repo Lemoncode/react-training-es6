@@ -14,7 +14,7 @@ Summary steps:
 
 - We will create Training model:
 
-### ./src/common/models/training.ts
+### ./src/common/models/training.js
 ```javascript
 export class Training {
   id: number;
@@ -38,11 +38,9 @@ export class Training {
 
 - Now, we can create mock data:
 
-### ./src/rest-api/training/trainingMockData.ts
+### ./src/rest-api/training/trainingMockData.js
 ```javascript
-import {Training} from '../../models/training';
-
-export const trainingsMockData: Training[] = [
+export const trainingsMockData = [
   {
     id: 1,
     name: 'React',
@@ -113,15 +111,14 @@ export const trainingsMockData: Training[] = [
 
 - And fake trainingAPI to fetch trainings:
 
-### ./src/rest-api/training/trainingAPI.ts
+### ./src/rest-api/training/trainingAPI.js
 ```javascript
-import {Training} from '../../models/training';
 import {trainingsMockData} from './trainingMockData';
 
-// Fake API using es6 Promises polyfill (with core-js).
+// Fake API using es6 Promises polyfill (with babel-preset-env).
 // In future, we can replace by real one.
 class TrainingAPI {
-  public fetchTrainings(): Promise<Training[]> {
+  fetchTrainings(): Promise {
     return Promise.resolve(trainingsMockData);
   }
 }
@@ -132,22 +129,21 @@ export const trainingAPI = new TrainingAPI();
 
 - Once we have trainingAPI, we can use it in TrainingListPageContainer:
 
-### ./src/pages/training/list/pageContainer.tsx
+### ./src/pages/training/list/pageContainer.jsx
 ```javascript
 import * as React from 'react';
 import * as toastr from 'toastr';
 import {trainingAPI} from '../../../rest-api/training/trainingAPI';
-import {Training} from '../../../models/training';
 import {TrainingListPage} from './page';
 
-interface State {
-  trainings: Training[];
-}
-
-export class TrainingListPageContainer extends React.Component <{}, State> {
+export class TrainingListPageContainer extends React.Component {
   constructor() {
     super();
     this.fetchTrainings();
+
+    this.state = {
+      trainings: [],
+    };
   }
 
   // We are creating new array from trainings from API
@@ -156,7 +152,7 @@ export class TrainingListPageContainer extends React.Component <{}, State> {
   // Other way to do same:
   // var newTrainings = [].concat(trainings);
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat
-  private fetchTrainings() {
+  fetchTrainings() {
     trainingAPI.fetchTrainings()
       .then((trainings) => {
         this.setState({
@@ -168,7 +164,7 @@ export class TrainingListPageContainer extends React.Component <{}, State> {
       });
   }
 
-  public render() {
+  render() {
     return (
       <TrainingListPage trainings={this.state.trainings} />
     );
@@ -179,7 +175,7 @@ export class TrainingListPageContainer extends React.Component <{}, State> {
 
 - Now, it's time to create the table:
 
-### ./src/pages/training/list/components/trainingHead.tsx
+### ./src/pages/training/list/components/trainingHead.jsx
 ```javascript
 import * as React from 'react';
 
@@ -205,16 +201,11 @@ export const TrainingHeadComponent = () => {
 
 ```
 
-### ./src/pages/training/list/components/trainingRow.tsx
+### ./src/pages/training/list/components/trainingRow.jsx
 ```javascript
 import * as React from 'react';
-import {Training} from '../../../../models/training';
 
-interface Props {
-  training: Training;
-}
-
-export const TrainingRowComponent = (props: Props) => {
+export const TrainingRowComponent = (props) => {
   return (
     <tr>
       <td>
@@ -237,20 +228,26 @@ export const TrainingRowComponent = (props: Props) => {
   );
 }
 
+TrainingRowComponent.propTypes = {
+  training: React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    url: React.PropTypes.string.isRequired,
+    startDate: React.PropTypes.number.isRequired,
+    endDate: React.PropTypes.number.isRequired,
+    isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
+}
+
 ```
 
-### ./src/pages/training/list/components/trainingList.tsx
+### ./src/pages/training/list/components/trainingList.jsx
 ```javascript
 import * as React from 'react';
-import {Training} from '../../../../models/training';
 import {TrainingHeadComponent} from './trainingHead';
 import {TrainingRowComponent} from './trainingRow';
 
-interface Props {
-  trainings: Training[];
-}
-
-export const TrainingListComponent = (props: Props) => {
+export const TrainingListComponent = (props) => {
   return (
     <div className="container">
       <table className="table table-striped">
@@ -270,18 +267,30 @@ export const TrainingListComponent = (props: Props) => {
   );
 };
 
+TrainingListComponent.propTypes = {
+  trainings: React.PropTypes.arrayOf(
+    React.PropTypes.shape({
+      id: React.PropTypes.number.isRequired,
+      name: React.PropTypes.string.isRequired,
+      url: React.PropTypes.string.isRequired,
+      startDate: React.PropTypes.number.isRequired,
+      endDate: React.PropTypes.number.isRequired,
+      isActive: React.PropTypes.bool.isRequired,
+    })
+  ).isRequired,
+}
+
 ```
 
 - Use all components in TrainingListPage:
 
-### ./src/pages/training/list/page.tsx
-```javascript
+### ./src/pages/training/list/page.jsx
+```diff
 import * as React from 'react';
-+ import {Training} from '../../../models/training';
 + import {TrainingListComponent} from './components/trainingList';
 
 - export const TrainingListPage = () => {
-+ export const TrainingListPage = (props: Props) => {
++ export const TrainingListPage = (props) => {
     return (
 -     <div>Training list</div>
 +     <div>
@@ -290,12 +299,26 @@ import * as React from 'react';
 +     </div>
     );
   }
+
++ TrainingListPage.PropTypes = {
++   trainings: React.propTypes.arrayOf(
++     React.PropTypes.shape({
++       id: React.PropTypes.number.isRequired,
++       name: React.PropTypes.string.isRequired,
++       url: React.PropTypes.string.isRequired,
++       startDate: React.PropTypes.number.isRequired,
++       endDate: React.PropTypes.number.isRequired,
++       isActive: React.PropTypes.bool.isRequired,
++     })
++   ).isRequired,
++ }
+
 ```
 
 - And of course, update route:
 
-### ./src/routes.tsx
-```javascript
+### ./src/routes.jsx
+```diff
 import * as React from 'react';
 import {Route, IndexRoute} from 'react-router';
 import {routeConstants} from './common/constants/routeConstants';
