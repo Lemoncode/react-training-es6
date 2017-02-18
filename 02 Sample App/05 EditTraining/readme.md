@@ -153,36 +153,13 @@ export const TrainingRowComponent = (props) => {
 ```
 
 - Once we have navigation, we can start with creating _TrainingFormComponent_.
-  We're going to move input component to _./src/common/components/form_ folder because we'll create some form components
-  and group them in this folder.
-
-### ./src/pages/login/components/form.jsx
-```javascript
-import * as React from 'react';
-import {LoginCredentials} from '../../../models/loginCredentials';
-- import {InputComponent} from '../../../common/components/input';
-+ import {InputComponent} from '../../../common/components/form/input';
-
-```
+  We're going to start with form components:
 
 ### ./src/common/components/form/input.jsx
-```javascript
+```diff
 import * as React from 'react';
 
-- interface Props {
-+ export interface InputProps {
-  label: string;
-  name: string;
-  type: string;
-  value: string;
-  placeholder?: string;
-  onChange: any;
-+ className?: string;
-+ disabled?: boolean;
-}
-
-- export const InputComponent = (props: Props) => {
-+ export const InputComponent = (props: InputProps) => {
+export const InputComponent = (props) => {
   return (
 -   <div className="form-group">
 +   <div className={`form-group ${props.className}`}>
@@ -203,20 +180,24 @@ import * as React from 'react';
   );
 }
 
+InputComponent.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired,
+  type: React.PropTypes.string.isRequired,
+  value: React.PropTypes.string.isRequired,
+  placeholder: React.PropTypes.string,
+  onChange: React.PropTypes.func.isRequired,
++ className: React.PropTypes.string,
++ disabled: React.PropTypes.bool,
+}
+
 ```
 
 ### ./src/common/components/form/inputButton.jsx
 ```javascript
 import * as React from 'react';
-import {InputProps} from './input';
 
-interface Props extends InputProps {
-  onClick: () => void;
-  buttonClassName: string;
-  icon: string;
-}
-
-export const InputButtonComponent = (props: Props) => {
+export const InputButtonComponent = (props) => {
   return (
     <div className={`form-group ${props.className}`}>
       <label htmlFor={props.name}>
@@ -243,21 +224,27 @@ export const InputButtonComponent = (props: Props) => {
   );
 };
 
+InputButtonComponent.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired,
+  type: React.PropTypes.string.isRequired,
+  value: React.PropTypes.string.isRequired,
+  placeholder: React.PropTypes.string,
+  onChange: React.PropTypes.func.isRequired,
+  className: React.PropTypes.string,
+  disabled: React.PropTypes.bool,
+  onClick: React.PropTypes.func.isRequired,
+  buttonClassName: React.PropTypes.string.isRequired,
+  icon: React.PropTypes.string.isRequired,
+}
+
 ```
 
-### ./src/common/components/form/checkbox.jsx
+### ./src/common/components/form/checkBox.jsx
 ```javascript
 import * as React from 'react';
 
-interface Props {
-  label: string;
-  name: string;
-  value: boolean;
-  onChange: any;
-  className?: string;
-}
-
-export const CheckBoxComponent = (props: Props) => {
+export const CheckBoxComponent = (props) => {
   return (
     <div className={`checkbox ${props.className}`}>
       <label htmlFor={props.name}>
@@ -274,6 +261,14 @@ export const CheckBoxComponent = (props: Props) => {
   );
 }
 
+CheckBoxComponent.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired,
+  value: React.PropTypes.bool.isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  className: React.PropTypes.string,
+}
+
 ```
 
 - Building TrainingFormComponent:
@@ -281,19 +276,12 @@ export const CheckBoxComponent = (props: Props) => {
 ### ./src/pages/training/edit/components/trainingForm.jsx
 ```javascript
 import * as React from 'react';
-import * as moment from 'moment';
-import {Training} from '../../../../models/training';
+import moment from 'moment';
 import {InputComponent} from '../../../../common/components/form/input';
 import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
 import {InputButtonComponent} from '../../../../common/components/form/inputButton';
 
-interface Props {
-  training: Training;
-  onChange: (fieldName: string, value: any) => void;
-  save: (training: Training) => void;
-}
-
-export class TrainingFormComponent extends React.Component<Props, {}> {
+export class TrainingFormComponent extends React.Component {
   constructor() {
     super();
 
@@ -303,7 +291,7 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
     this.save = this.save.bind(this);
   }
 
-  private onChange (event) {
+  onChange (event) {
     const fieldName = event.target.name;
     const value = event.target.type === 'checkbox' ?
       event.target.checked :
@@ -312,27 +300,27 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
     this.props.onChange(fieldName, value);
   }
 
-  private onChangeStartDate(date: moment.Moment) {
+  onChangeStartDate(date: moment.Moment) {
     this.onChangeDate('startDate', date);
     this.toggleOpenStartDateModal();
   }
 
-  private onChangeEndDate(date: moment.Moment) {
+  onChangeEndDate(date: moment.Moment) {
     this.onChangeDate('endDate', date);
     this.toggleOpenEndDateModal();
   }
 
-  private onChangeDate(fieldName: string, date: moment.Moment) {
+  onChangeDate(fieldName: string, date: moment.Moment) {
     const milliseconds = date.valueOf();
     this.props.onChange(fieldName, milliseconds);
   }
 
-  private save(event) {
+  save(event) {
     event.preventDefault();
     this.props.save(this.props.training);
   }
 
-  public render() {
+  render() {
     return (
       <form className="container">
         <div className="row">
@@ -368,7 +356,7 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {})}
+            onClick={() => {}}
             icon="glyphicon glyphicon-calendar"
           />
 
@@ -382,7 +370,7 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {})}
+            onClick={() => {}}
             icon="glyphicon glyphicon-calendar"
           />
         </div>
@@ -410,6 +398,34 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
     );
   }
 };
+
+TrainingFormComponent.propTypes = {
+  training: React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    url: React.PropTypes.string.isRequired,
+    startDate: React.PropTypes.number.isRequired,
+    endDate: React.PropTypes.number.isRequired,
+    isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  save: React.PropTypes.func.isRequired,
+}
+
+```
+
+- We can use it in _TrainingEditPage_ to see how our form is going on:
+
+### ./src/pages/training/edit/page.jsx
+```diff
+import * as React from 'react';
++ import {TrainingFormComponent} from './components/trainingForm.jsx';
+
+export const TrainingEditPage = () => {
+  return (
+    <div>Training Edit page</div>
+  );
+}
 
 ```
 
@@ -571,7 +587,7 @@ export const formatConstants = {
 ### ./src/pages/training/edit/components/trainingForm.jsx
 ```javascript
 import * as React from 'react';
-import * as moment from 'moment';
+import moment from 'moment';
 import {Training} from '../../../../models/training';
 import {InputComponent} from '../../../../common/components/form/input';
 import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
@@ -688,7 +704,7 @@ interface Props {
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {})}
+            onClick={() => {}}
             icon="glyphicon glyphicon-calendar"
           />
 
@@ -709,7 +725,7 @@ interface Props {
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {})}
+            onClick={() => {}}
             icon="glyphicon glyphicon-calendar"
           />
 
@@ -942,7 +958,7 @@ import * as React from 'react';
 ### ./src/pages/training/edit/components/trainingForm.jsx
 ```javascript
 import * as React from 'react';
-import * as moment from 'moment';
+import moment from 'moment';
 import {Training} from '../../../../models/training';
 import {InputComponent} from '../../../../common/components/form/input';
 import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
@@ -1156,7 +1172,7 @@ interface Props {
 ### ./src/pages/training/edit/components/trainingFormContainer.jsx
 ```javascript
 import * as React from 'react';
-import * as moment from 'moment';
+import moment from 'moment';
 import {Training} from '../../../../models/training';
 import {TrainingFormComponent} from './trainingForm';
 
