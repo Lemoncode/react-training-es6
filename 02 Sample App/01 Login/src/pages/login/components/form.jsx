@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {LoginCredentials} from '../../../models/loginCredentials';
 import {InputComponent} from '../../../common/components/form/input';
 
 export const FormComponent = (props) => {
@@ -7,6 +6,11 @@ export const FormComponent = (props) => {
     const fieldName = event.target.name;
     const value = event.target.value;
     props.updateLoginInfo(fieldName, value);
+  };
+
+  const loginRequest = (event) => {
+    event.preventDefault();
+    props.loginRequest(props.loginCredentials);
   };
 
   return (
@@ -31,6 +35,7 @@ export const FormComponent = (props) => {
         <button
           type="submit"
           className="btn btn-lg btn-success btn-block"
+          onClick={loginRequest.bind(this)}
         >
           Login
         </button>
@@ -40,6 +45,10 @@ export const FormComponent = (props) => {
 };
 
 FormComponent.propTypes = {
-  loginCredentials: React.PropTypes.instanceOf(LoginCredentials).isRequired,
+  loginCredentials: React.PropTypes.shape({
+    login: React.PropTypes.string.isRequired,
+    password: React.PropTypes.string.isRequired,
+  }).isRequired,
   updateLoginInfo: React.PropTypes.func.isRequired,
+  loginRequest: React.PropTypes.func.isRequired,
 }

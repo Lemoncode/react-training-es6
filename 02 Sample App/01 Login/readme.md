@@ -45,13 +45,11 @@ import * as React from 'react';
 
 export const LoginPage = () => {
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-md-4 col-md-offset-4">
-          <div className="panel panel-default">
-            <div>Header Component</div>
-            <div>Form Component</div>
-          </div>
+    <div className="row">
+      <div className="col-md-4 col-md-offset-4">
+        <div className="panel panel-default">
+          <div>Header Component</div>
+          <div>Form Component</div>
         </div>
       </div>
     </div>
@@ -131,14 +129,12 @@ import * as React from 'react';
 
 export const LoginPage = () => {
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-md-4 col-md-offset-4">
-          <div className="panel panel-default">
+    <div className="row">
+      <div className="col-md-4 col-md-offset-4">
+        <div className="panel panel-default">
 -            <div>Header Component</div>
 +            <HeaderComponent />
-            <div>Form Component</div>
-          </div>
+          <div>Form Component</div>
         </div>
       </div>
     </div>
@@ -168,7 +164,6 @@ export class LoginCredentials {
 ### ./src/pages/login/components/form.jsx
 ```javascript
 import * as React from 'react';
-import {LoginCredentials} from '../../../models/loginCredentials';
 
 export const FormComponent = (props) => {
   const updateLoginInfo = (event) => {
@@ -218,7 +213,10 @@ export const FormComponent = (props) => {
 };
 
 FormComponent.propTypes = {
-  loginCredentials: React.PropTypes.instanceOf(LoginCredentials).isRequired,
+  loginCredentials: React.PropTypes.shape({
+    login: React.PropTypes.string.isRequired,
+    password: React.PropTypes.string.isRequired,
+  }).isRequired,
   updateLoginInfo: React.PropTypes.func.isRequired,
 }
 
@@ -323,7 +321,6 @@ InputComponent.propTypes = {
 ### ./src/pages/login/components/form.jsx
 ```diff
 import * as React from 'react';
-import {LoginCredentials} from '../../../models/loginCredentials';
 + import {InputComponent} from '../../../common/components/form/input';
 
 export const FormComponent = (props) => {
@@ -390,7 +387,10 @@ export const FormComponent = (props) => {
 };
 
 FormComponent.propTypes = {
-  loginCredentials: React.PropTypes.instanceOf(LoginCredentials).isRequired,
+  loginCredentials: React.PropTypes.shape({
+    login: React.PropTypes.string.isRequired,
+    password: React.PropTypes.string.isRequired,
+  }).isRequired,
   updateLoginInfo: React.PropTypes.func.isRequired,
 }
 
@@ -398,33 +398,11 @@ FormComponent.propTypes = {
 
 ## Create fake API
 
-- First we are going to create UserProfile model:
-
-### ./src/models/userProfile.js
-```javascript
-export class UserProfile {
-  id: number;
-  login: string;
-  fullname: string;
-  role: string;
-
-  constructor() {
-    this.id = 0;
-    this.login = '';
-    this.fullname = '';
-    this.role = '';
-  }
-}
-
-```
-
 - Create mock data:
 
 ### ./src/rest-api/login/loginMockData.js
 ```javascript
-import {UserProfile} from '../../models/userProfile';
-
-export const userProfiles: UserProfile[] = [
+export const userProfiles = [
   {
     id: 1, login: 'admin', fullname: 'Admin', role: 'admin',
   },
@@ -434,20 +412,18 @@ export const userProfiles: UserProfile[] = [
 
 ### ./src/rest-api/login/loginAPI.js
 ```javascript
-import {LoginCredentials} from '../../models/loginCredentials';
-import {UserProfile} from '../../models/userProfile';
 import {userProfiles} from './loginMockData';
 
-// Fake API using es6 Promises polyfill (with core-js).
+// Fake API using es6 Promises polyfill (with babel-preset-env).
 // In future, we can replace by real one.
 class LoginAPI {
-  public login(loginCredentials: LoginCredentials): Promise<UserProfile> {
+  login(loginCredentials): Promise {
     let userProfile = userProfiles.find((userProfile) => {
       return userProfile.login === loginCredentials.login;
     });
 
     if (!userProfile || loginCredentials.password !== 'test') {
-      return Promise.reject<UserProfile>('Invalid login or password');
+      return Promise.reject('Invalid login or password');
     }
 
     return Promise.resolve(userProfile);
@@ -461,20 +437,15 @@ export const loginAPI = new LoginAPI();
 - Now, we can request login in LoginPage using this API:
 
 ### ./src/pages/login/page.jsx
-```javascript
+```diff
 import * as React from 'react';
 + import * as toastr from 'toastr';
 + import {loginAPI} from '../../rest-api/login/loginAPI';
 import {LoginCredentials} from '../../models/loginCredentials';
-+ import {UserProfile} from '../../models/userProfile';
 import {HeaderComponent} from './components/header';
 import {FormComponent} from './components/form';
 
-interface State {
-  loginCredentials: LoginCredentials;
-}
-
-export class LoginPage extends React.Component <{}, State> {
+export class LoginPage extends React.Component {
   constructor() {
     super();
 
@@ -483,19 +454,19 @@ export class LoginPage extends React.Component <{}, State> {
     };
   }
 
-  private updateLoginInfo(fieldName: string, value: string) {
+  private updateLoginInfo(fieldName, value) {
     this.setState({
       loginCredentials: {
         ...this.state.loginCredentials,
         [fieldName]: value,
-      }
+      },
     });
   }
 
-+  private loginRequest(loginCredentials: LoginCredentials) {
++  loginRequest(loginCredentials) {
 +    toastr.remove();
 +    loginAPI.login(loginCredentials)
-+      .then((userProfile: UserProfile) => {
++      .then((userProfile) => {
 +        toastr.success(`Success login ${userProfile.fullname}`);
 +      })
 +      .catch((error) => {
@@ -503,7 +474,7 @@ export class LoginPage extends React.Component <{}, State> {
 +      });
 +  }
 
-  public render() {
+  render() {
     return (
       <div className="row">
         <div className="col-md-4 col-md-offset-4">
@@ -526,18 +497,11 @@ export class LoginPage extends React.Component <{}, State> {
 - And update form to has loginRequest property:
 
 ### ./src/pages/login/components/form.jsx
-```javascript
+```diff
 import * as React from 'react';
-import {LoginCredentials} from '../../../models/loginCredentials';
 import {InputComponent} from '../../../common/components/input';
 
-interface Props {
-  loginCredentials: LoginCredentials;
-  updateLoginInfo: (fieldName: string, value: string) => void;
-+ loginRequest: (loginCredentials: LoginCredentials) => void;
-}
-
-export const FormComponent = (props: Props) => {
+export const FormComponent = (props) => {
   const updateLoginInfo = (event) => {
     const fieldName = event.target.name;
     const value = event.target.value;
@@ -547,7 +511,7 @@ export const FormComponent = (props: Props) => {
 +  const loginRequest = (event) => {
 +    event.preventDefault();
 +    props.loginRequest(props.loginCredentials);
-+  }
++  };
 
   return (
     <div className="panel-body">
@@ -580,29 +544,30 @@ export const FormComponent = (props: Props) => {
   );
 };
 
+FormComponent.propTypes = {
+  loginCredentials: React.PropTypes.shape({
+    login: React.PropTypes.string.isRequired,
+    password: React.PropTypes.string.isRequired,
+  }).isRequired,
+  updateLoginInfo: React.PropTypes.func.isRequired,
++ loginRequest: React.PropTypes.func.isRequired,
+}
+
 ```
 
 - Finally, we can go one step over, and create a wrapper to keep LoginPage as stateless component:
 
-### ./src
-```javascript
+### ./src/pages/login/page.jsx
+```diff
 import * as React from 'react';
 - import * as toastr from 'toastr';
 - import {loginAPI} from '../../rest-api/login/loginAPI';
-import {LoginCredentials} from '../../models/loginCredentials';
-- import {UserProfile} from '../../models/userProfile';
+- import {LoginCredentials} from '../../models/loginCredentials';
 import {HeaderComponent} from './components/header';
 import {FormComponent} from './components/form';
 
-- interface State {
-+ interface Props {
-  loginCredentials: LoginCredentials;
-+ updateLoginInfo: (fieldName: string, value: string) => void;
-+ loginRequest: (loginCredentials: LoginCredentials) => void;
-}
-
-- export class LoginPage extends React.Component <{}, State> {
-+ export const LoginPage = (props: Props) => {  
+- export class LoginPage extends React.Component {
++ export const LoginPage = (props) => {  
 -  constructor() {
 -    super();
 -
@@ -611,7 +576,7 @@ import {FormComponent} from './components/form';
 -    };
 -  }
 
--  private updateLoginInfo(fieldName: string, value: string) {
+-  private updateLoginInfo(fieldName, value) {
 -    this.setState({
 -      loginCredentials: {
 -        ...this.state.loginCredentials,
@@ -620,10 +585,10 @@ import {FormComponent} from './components/form';
 -    });
 -  }
 
--  private loginRequest(loginCredentials: LoginCredentials) {
+-  private loginRequest(loginCredentials) {
 -    toastr.remove();
 -    loginAPI.login(loginCredentials)
--      .then((userProfile: UserProfile) => {
+-      .then((userProfile) => {
 -        toastr.success(`Success login ${userProfile.fullname}`);
 -      })
 -      .catch((error) => {
@@ -638,11 +603,12 @@ import {FormComponent} from './components/form';
           <div className="panel panel-default">
             <HeaderComponent />
             <FormComponent
-              loginCredentials={this.state.loginCredentials}
--              updateLoginInfo={this.updateLoginInfo.bind(this)}
--              loginRequest={this.loginRequest.bind(this)}
-+              updateLoginInfo={props.updateLoginInfo}
-+              loginRequest={props.loginRequest}
+-             loginCredentials={this.state.loginCredentials}
++             loginCredentials={props.loginCredentials}
+-             updateLoginInfo={this.updateLoginInfo.bind(this)}
++             updateLoginInfo={props.updateLoginInfo}
+-             loginRequest={this.loginRequest.bind(this)}
++             loginRequest={props.loginRequest}
             />
           </div>
         </div>
@@ -650,6 +616,15 @@ import {FormComponent} from './components/form';
     );
 -  }
 };
+
++ LoginPage.propTypes = {
++   loginCredentials: React.PropTypes.shape({
++     login: React.PropTypes.string.isRequired,
++     password: React.PropTypes.string.isRequired,
++   }).isRequired,
++   updateLoginInfo: React.PropTypes.func.isRequired,
++   loginRequest: React.PropTypes.func.isRequired,
++}
 
 ```
 
@@ -661,14 +636,9 @@ import * as React from 'react';
 import * as toastr from 'toastr';
 import {loginAPI} from '../../rest-api/login/loginAPI';
 import {LoginCredentials} from '../../models/loginCredentials';
-import {UserProfile} from '../../models/userProfile';
 import {LoginPage} from './page';
 
-interface State {
-  loginCredentials: LoginCredentials;
-}
-
-export class LoginPageContainer extends React.Component <{}, State> {
+export class LoginPageContainer extends React.Component {
   constructor() {
     super();
 
@@ -677,19 +647,29 @@ export class LoginPageContainer extends React.Component <{}, State> {
     };
   }
 
-  private updateLoginInfo(fieldName: string, value: string) {
+  // Other way to assign new object to loginCredentials to avoid mutation is:
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+  /*
+    var newLoginCredentiasl = Object.assign({}, this.state.loginCredentials, {
+      [fieldName]: value,
+    });
+  */
+  // We are use a JavaScript proposal named object spread operator
+  // https://github.com/sebmarkbage/ecmascript-rest-spread
+  // http://stackoverflow.com/questions/32925460/spread-operator-vs-object-assign
+  updateLoginInfo(fieldName, value) {
     this.setState({
       loginCredentials: {
         ...this.state.loginCredentials,
         [fieldName]: value,
-      }
+      },
     });
   }
 
-  private loginRequest(loginCredentials: LoginCredentials) {
+  loginRequest(loginCredentials) {
     toastr.remove();
     loginAPI.login(loginCredentials)
-      .then((userProfile: UserProfile) => {
+      .then((userProfile) => {
         toastr.success(`Success login ${userProfile.fullname}`);
       })
       .catch((error) => {
@@ -697,7 +677,7 @@ export class LoginPageContainer extends React.Component <{}, State> {
       });
   }
 
-  public render() {
+  render() {
     return (
       <LoginPage
         loginCredentials={this.state.loginCredentials}
@@ -717,7 +697,7 @@ export class LoginPageContainer extends React.Component <{}, State> {
 import * as React from 'react';
 - import {LoginPage} from './pages/login/page';
 + import {LoginPageContainer} from './pages/login/pageContainer';
-const classNames: any = require('./appStyles');
+import classNames from './appStyles';
 
 export const App = () => {
   return (
