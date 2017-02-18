@@ -103,7 +103,7 @@ export class TrainingFormComponent extends React.Component {
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {}}
+            onClick={this.toggleOpenStartDateModal}
             icon="glyphicon glyphicon-calendar"
           />
 
@@ -124,7 +124,7 @@ export class TrainingFormComponent extends React.Component {
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {}}
+            onClick={this.toggleOpenEndDateModal}
             icon="glyphicon glyphicon-calendar"
           />
 

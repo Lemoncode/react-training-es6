@@ -32,9 +32,9 @@ class TrainingAPI {
     this.trainings = [
       ...this.trainings.slice(0, index),
       training,
-      ...this.trainings.slice(index 1)
+      ...this.trainings.slice(index + 1)
     ];
-    
+
     return Promise.resolve('Save training success');
   }
 }

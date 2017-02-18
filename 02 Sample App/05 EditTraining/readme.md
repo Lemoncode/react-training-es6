@@ -419,7 +419,7 @@ TrainingFormComponent.propTypes = {
 ### ./src/pages/training/edit/page.jsx
 ```diff
 import * as React from 'react';
-+ import {TrainingFormComponent} from './components/trainingForm.jsx';
++ import {TrainingFormComponent} from './components/trainingForm';
 
 export const TrainingEditPage = () => {
   return (
@@ -730,7 +730,8 @@ export class TrainingFormComponent extends React.Component {
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {}}
+-           onClick={() => {}}
++           onClick={this.toggleOpenStartDateModal}
             icon="glyphicon glyphicon-calendar"
           />
 
@@ -756,7 +757,8 @@ export class TrainingFormComponent extends React.Component {
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
-            onClick={() => {}}
+-           onClick={() => {}}
++           onClick={this.toggleOpenEndDateModal}
             icon="glyphicon glyphicon-calendar"
           />
 
@@ -869,15 +871,7 @@ import {Training} from '../../../models/training';
 import {TrainingEditPage} from './page';
 import {trainingAPI} from '../../../rest-api/training/trainingAPI';
 
-interface Props {
-  params: any
-}
-
-interface State {
-  training: Training;
-}
-
-export class TrainingEditPageContainer extends React.Component<Props, State> {
+export class TrainingEditPageContainer extends React.Component {
   constructor() {
     super();
 
@@ -915,7 +909,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
     });
   }
 
-  save(training: Training) {
+  save(training) {
     toastr.remove();
     trainingAPI.save(training)
       .then((message) => {
@@ -938,12 +932,16 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
   }
 }
 
+TrainingEditPageContainer.propTypes = {
+  params: React.PropTypes.any.isRequired,
+}
+
 ```
 
 - Update route:
 
 ### ./src/routes.jsx
-```javascript
+```diff
 import * as React from 'react';
 import {Route, IndexRoute} from 'react-router';
 import {routeConstants} from './common/constants/routeConstants';
@@ -968,21 +966,18 @@ export const AppRoutes = (
 
 ### ./src/pages/training/edit/page.jsx
 
-```javascript
+```diff
 import * as React from 'react';
-+ import {Training} from '../../../models/training';
-+ import {TrainingFormComponent} from './components/trainingForm';
-
-+ interface Props {
-+   training: Training;
-+   onChange: (fieldName: string, value: any) => void;
-+   save: (training: Training) => void;
-+ }
+import {TrainingFormComponent} from './components/trainingForm';
 
 - export const TrainingEditPage = () => {
-+ export const TrainingEditPage = (props: Props) => {
++ export const TrainingEditPage = (props) => {
     return (
--     <div>Training Edit page</div>
+-     <TrainingFormComponent
+-       training={new Training()}
+-      onChange={() => {}}
+-       save={() => {}}
+-     />
 +     <div>
 +       <h2 className="jumbotron">Edit Training</h2>
 +       <TrainingFormComponent
@@ -994,12 +989,25 @@ import * as React from 'react';
     );
   }
 
++ TrainingEditPage.propTypes = {
++   training: React.PropTypes.shape({
++     id: React.PropTypes.number.isRequired,
++     name: React.PropTypes.string.isRequired,
++     url: React.PropTypes.string.isRequired,
++     startDate: React.PropTypes.number.isRequired,
++     endDate: React.PropTypes.number.isRequired,
++     isActive: React.PropTypes.bool.isRequired,
++   }).isRequired,
++   onChange: React.PropTypes.func.isRequired,
++   save: React.PropTypes.func.isRequired,
++ }
+
 ```
 
 - Too much lines on _TrainingFormComponent_? Ok, let's go to create container:
 
 ### ./src/pages/training/edit/components/trainingForm.jsx
-```javascript
+```diff
 import * as React from 'react';
 import moment from 'moment';
 import {Training} from '../../../../models/training';
