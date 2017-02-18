@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {Training} from '../../../models/training';
-import {TrainingFormComponent} from './components/trainingForm';
+import {TrainingFormComponentContainer} from './components/trainingFormContainer';
 
 export const TrainingEditPage = (props) => {
   return (
     <div>
       <h2 className="jumbotron">Edit Training</h2>
-      <TrainingFormComponent
+      <TrainingFormComponentContainer
         training={props.training}
         onChange={props.onChange}
         save={props.save}
