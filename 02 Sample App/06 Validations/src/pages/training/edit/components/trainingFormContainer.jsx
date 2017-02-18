@@ -66,6 +66,7 @@ export class TrainingFormComponentContainer extends React.Component {
     return (
       <TrainingFormComponent
         training={this.props.training}
+        trainingErrors={this.props.trainingErrors}
         onChange={this.onChange}
         save={this.save}
         isOpenStartDateModal={this.state.isOpenStartDateModal}
@@ -87,6 +88,11 @@ TrainingFormComponentContainer.propTypes = {
     startDate: React.PropTypes.number.isRequired,
     endDate: React.PropTypes.number.isRequired,
     isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
+  trainingErrors: React.PropTypes.shape({
+    name: React.PropTypes.string,
+    url: React.PropTypes.string,
+    endDate: React.PropTypes.string,
   }).isRequired,
   onChange: React.PropTypes.func.isRequired,
   save: React.PropTypes.func.isRequired,

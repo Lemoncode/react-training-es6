@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as toastr from 'toastr';
 import {hashHistory} from 'react-router';
 import {Training} from '../../../models/training';
+import {TrainingErrors} from '../../../models/trainingErrors';
 import {TrainingEditPage} from './page';
 import {trainingAPI} from '../../../rest-api/training/trainingAPI';
 
@@ -11,6 +12,7 @@ export class TrainingEditPageContainer extends React.Component {
 
     this.state = {
       training: new Training(),
+      trainingErrors: new TrainingErrors(),
     };
     this.onChange = this.onChange.bind(this);
     this.save = this.save.bind(this);
@@ -59,6 +61,7 @@ export class TrainingEditPageContainer extends React.Component {
     return (
       <TrainingEditPage
         training={this.state.training}
+        trainingErrors={this.state.trainingErrors}
         onChange={this.onChange}
         save={this.save}
       />

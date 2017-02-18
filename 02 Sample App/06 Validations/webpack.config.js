@@ -22,6 +22,7 @@ module.exports = {
       'react-addons-css-transition-group',
       'moment',
       'react-modal',
+      'validate.js',
     ],
     vendorStyles: [
       '../node_modules/bootstrap/dist/css/bootstrap.css',

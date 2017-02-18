@@ -14,7 +14,7 @@ Summary steps:
 
 ## Steps to build it
 
-- Let's install validate.js, it's a JavaScript library for validations. We'll use require for import this lib:
+- Let's install validate.js, it's a JavaScript library for validations:
 
  ```
  npm install validate.js --save
@@ -23,7 +23,7 @@ Summary steps:
  - Add lib as vendor:
 
  ### ./webpack.config.js
- ```javascript
+ ```diff
  entry: {
    ...
    vendor: [
@@ -38,18 +38,12 @@ Summary steps:
 
 - We can start to create a validation component that it's going to style input components when errors occurs:
 
-### ./src/common/components/form/validation.tsx
+### ./src/common/components/form/validation.jsx
 ```javascript
 import * as React from 'react';
-const classNames: any = require('./validationStyles');
+import classNames from './validationStyles';
 
-interface Props {
-  error: string;
-  className?: string;
-  children?: React.ReactNode | React.ReactNode[];
-}
-
-export const ValidationComponent = (props: Props) => {
+export const ValidationComponent = (props) => {
   let wrapperClass: string = `${props.className}`;
 
   if(props.error && props.error.length > 0) {
@@ -66,6 +60,15 @@ export const ValidationComponent = (props: Props) => {
   );
 }
 
+ValidationComponent.propTypes = {
+  error: React.PropTypes.string.isRequired,
+  className: React.PropTypes.string,
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.element,
+    React.PropTypes.arrayOf(React.PropTypes.element),
+  ]),
+}
+
 ```
 
 ### ./src/common/components/form/validationStyles.css
@@ -78,7 +81,7 @@ export const ValidationComponent = (props: Props) => {
 
 - And create a model for errors:
 
-### ./src/models/trainingErrors.ts
+### ./src/models/trainingErrors.js
 ```javascript
 export class TrainingErrors {
   name: string;
@@ -90,30 +93,17 @@ export class TrainingErrors {
 
 - Now we can use it, in _TrainingFormComponent_:
 
-### ./src/pages/training/edit/components/trainingForm.tsx
-```javascript
+### ./src/pages/training/edit/components/trainingForm.jsx
+```diff
 import * as React from 'react';
 import * as moment from 'moment';
-import {Training} from '../../../../models/training';
-+ import {TrainingErrors} from '../../../../models/trainingErrors';
 import {InputComponent} from '../../../../common/components/form/input';
 import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
 import {InputButtonComponent} from '../../../../common/components/form/inputButton';
 import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
 import {formatConstants} from '../../../../common/constants/formatConstants';
-
-interface Props {
-  training: Training;
-+ trainingErrors: TrainingErrors;
-  onChange: (event) => void;
-  save: (event) => void;
-  isOpenStartDateModal: boolean;
-  toggleOpenStartDateModal: () => void;
-  onChangeStartDate: (date: moment.Moment) => void;
-  isOpenEndDateModal: boolean;
-  toggleOpenEndDateModal: () => void;
-  onChangeEndDate: (date: moment.Moment) => void;
-}
++
+import {ValidationComponent} from '../../../../common/components/form/validation';
 
 export const TrainingFormComponent = (props: Props) => {
   return (
@@ -226,28 +216,39 @@ export const TrainingFormComponent = (props: Props) => {
   );
 };
 
+TrainingFormComponent.propTypes = {
+  training: React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    url: React.PropTypes.string.isRequired,
+    startDate: React.PropTypes.number.isRequired,
+    endDate: React.PropTypes.number.isRequired,
+    isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
++ trainingErrors: React.PropTypes.shape({
++   name: React.PropTypes.string,
++   url: React.PropTypes.string,
++   endDate: React.PropTypes.string,
++ }).isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  save: React.PropTypes.func.isRequired,
+  isOpenStartDateModal: React.PropTypes.bool.isRequired,
+  toggleOpenStartDateModal: React.PropTypes.func.isRequired,
+  onChangeStartDate: React.PropTypes.func.isRequired,
+  isOpenEndDateModal: React.PropTypes.bool.isRequired,
+  toggleOpenEndDateModal: React.PropTypes.func.isRequired,
+  onChangeEndDate: React.PropTypes.func.isRequired,
+}
+
 ```
 
 - Updating _TrainingFormComponentContainer_:
 
-### ./src/pages/training/edit/components.trainingFormContainer.tsx
-```javascript
-import * as React from 'react';
-import * as moment from 'moment';
-import {Training} from '../../../../models/training';
-+ import {TrainingErrors} from '../../../../models/trainingErrors';
-import {TrainingFormComponent} from './trainingForm';
-
-interface Props {
-  training: Training;
-+ trainingErrors: TrainingErrors;
-  onChange: (fieldName: string, value: any) => void;
-  save: (training: Training) => void;
-}
-
+### ./src/pages/training/edit/components.trainingFormContainer.jsx
+```diff
 ...
 
-  public render() {
+  render() {
     return (
       <TrainingFormComponent
         training={this.props.training}
@@ -265,25 +266,35 @@ interface Props {
   }
 };
 
+TrainingFormComponentContainer.propTypes = {
+  training: React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    url: React.PropTypes.string.isRequired,
+    startDate: React.PropTypes.number.isRequired,
+    endDate: React.PropTypes.number.isRequired,
+    isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
++ trainingErrors: React.PropTypes.shape({
++   name: React.PropTypes.string,
++   url: React.PropTypes.string,
++   endDate: React.PropTypes.string,
++ }).isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  save: React.PropTypes.func.isRequired,
+}
+
 ```
 
 - Updating _TrainingEditPage_:
 
-### ./src/pages/training/edit/page.tsx
-```javascript
+### ./src/pages/training/edit/page.jsx
+```diff
 import * as React from 'react';
-import {Training} from '../../../models/training';
-+ import {TrainingErrors} from '../../../models/trainingErrors';
 import {TrainingFormComponentContainer} from './components/trainingFormContainer';
 
-interface Props {
-  training: Training;
-+ trainingErrors: TrainingErrors;
-  onChange: (fieldName: string, value: any) => void;
-  save: (training: Training) => void;
-}
 
-export const TrainingEditPage = (props: Props) => {
+export const TrainingEditPage = (props) => {
   return (
     <div>
       <h2 className="jumbotron">Edit Training</h2>
@@ -297,12 +308,30 @@ export const TrainingEditPage = (props: Props) => {
   );
 }
 
+TrainingEditPage.propTypes = {
+  training: React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    url: React.PropTypes.string.isRequired,
+    startDate: React.PropTypes.number.isRequired,
+    endDate: React.PropTypes.number.isRequired,
+    isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
++ trainingErrors: React.PropTypes.shape({
++   name: React.PropTypes.string,
++   url: React.PropTypes.string,
++   endDate: React.PropTypes.string,
++ }).isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  save: React.PropTypes.func.isRequired,
+}
+
 ```
 
 - And _TrainingEditPageContainer_:
 
-### ./src/pages/training/edit/pageContainer.tsx
-```javascript
+### ./src/pages/training/edit/pageContainer.jsx
+```diff
 import * as React from 'react';
 import * as toastr from 'toastr';
 import {hashHistory} from 'react-router';
@@ -311,16 +340,7 @@ import {Training} from '../../../models/training';
 import {TrainingEditPage} from './page';
 import {trainingAPI} from '../../../rest-api/training/trainingAPI';
 
-interface Props {
-  params: any
-}
-
-interface State {
-  training: Training;
-+ trainingErrors: TrainingErrors;
-}
-
-export class TrainingEditPageContainer extends React.Component<Props, State> {
+export class TrainingEditPageContainer extends React.Component {
   constructor() {
     super();
 
@@ -332,46 +352,9 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
     this.save = this.save.bind(this);
   }
 
-  public componentDidMount() {
-    this.fetchTraining();
-  }
+  ...
 
-  private fetchTraining() {
-    const trainingId = Number(this.props.params.id) || 0;
-    trainingAPI.fetchTrainingById(trainingId)
-      .then((training) => {
-        this.setState({
-          training: {...training}
-        })
-      })
-      .catch((error) => {
-        toastr.remove();
-        toastr.error(error);
-      });
-  }
-
-  private onChange(fieldName, value) {
-    this.setState({
-      training: {
-        ...this.state.training,
-        [fieldName]: value
-      }
-    });
-  }
-
-  private save(training: Training) {
-    toastr.remove();
-    trainingAPI.save(training)
-      .then((message) => {
-        toastr.success(message);
-        hashHistory.goBack();
-      })
-      .catch((error) => {
-        toastr.error(error);
-      });
-  }
-
-  public render() {
+  render() {
     return (
       <TrainingEditPage
         training={this.state.training}
@@ -383,11 +366,15 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
   }
 }
 
+TrainingEditPageContainer.propTypes = {
+  params: React.PropTypes.any.isRequired,
+}
+
 ```
 
 - Now it's time to create validations to feed these error:
 
-### ./src/pages/training/edit/components/validations/trainingFormConstraints.ts
+### ./src/pages/training/edit/components/validations/trainingFormConstraints.js
 ```javascript
 import * as moment from 'moment';
 import {Training} from '../../../../../models/training';
@@ -416,7 +403,7 @@ export const trainingFormConstraints = {
 
 ```
 
-### ./src/pages/training/edit/components/validations/trainingFormValidations.ts
+### ./src/pages/training/edit/components/validations/trainingFormValidations.js
 ```javascript
 const validate: any = require('validate.js');
 import {Training} from '../../../../../models/training';
