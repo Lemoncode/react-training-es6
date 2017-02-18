@@ -192,7 +192,7 @@ our webpack configuration (handling CSS, babel...).
 ### ./src/hello.jsx
 ```javascript
 import * as React from 'react';
-const classNames: any = require('./helloStyles');
+import classNames from './helloStyles';
 
 export const HelloComponent = () => {
   return (
