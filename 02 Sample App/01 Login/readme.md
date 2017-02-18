@@ -417,7 +417,7 @@ import {userProfiles} from './loginMockData';
 // Fake API using es6 Promises polyfill (with babel-preset-env).
 // In future, we can replace by real one.
 class LoginAPI {
-  login(loginCredentials): Promise {
+  login(loginCredentials) {
     let userProfile = userProfiles.find((userProfile) => {
       return userProfile.login === loginCredentials.login;
     });

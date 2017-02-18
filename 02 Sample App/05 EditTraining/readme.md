@@ -811,35 +811,34 @@ TrainingFormComponent.propTypes = {
 
 ### ./src/rest-api/training/trainingAPI.js
 
-```javascript
-import {Training} from '../../models/training';
+```diff
 import {trainingsMockData} from './trainingMockData';
 
-// Fake API using es6 Promises polyfill (with core-js).
+// Fake API using es6 Promises polyfill (with babel-preset-env).
 // In future, we can replace by real one.
 class TrainingAPI {
-+ trainings: Training[];
++ trainings;
 
 + constructor() {
 +   this.trainings = trainingsMockData;
 + }
 
-  fetchTrainings(): Promise<Training[]> {
+  fetchTrainings() {
 -   return Promise.resolve(trainingsMockData);
 +   return Promise.resolve(this.trainings);
   }
 
-+ fetchTrainingById(id: number): Promise<Training> {
++ fetchTrainingById(id) {
 +   const training = this.trainings.find(t => t.id === id);
 +   return Promise.resolve(training);
 + }
 
-+ save(training: Training): Promise<string> {
++ save(training) {
 +   const index = this.trainings.findIndex(t => t.id === training.id);
 +
 +   return index >= 0 ?
 +     this.saveTrainingByIndex(index, training) :
-+     Promise.reject<string>('Something was wrong saving training :(');
++     Promise.reject('Something was wrong saving training :(');
 + }
 
 + // Just ensure no mutable data. Copy in new Array all items but replacing
