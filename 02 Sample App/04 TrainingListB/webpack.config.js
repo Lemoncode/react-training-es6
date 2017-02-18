@@ -16,6 +16,9 @@ module.exports = {
       'react-dom',
       'react-router',
       'toastr',
+      'react-addons-shallow-compare',
+      'react-virtualized',
+      '../node_modules/react-virtualized/styles.css',
     ],
     vendorStyles: [
       '../node_modules/bootstrap/dist/css/bootstrap.css',
