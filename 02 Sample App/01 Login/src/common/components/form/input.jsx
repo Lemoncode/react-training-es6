@@ -1,15 +1,6 @@
 import * as React from 'react';
 
-interface Props {
-  label: string;
-  name: string;
-  type: string;
-  value: string;
-  placeholder?: string;
-  onChange: any;
-}
-
-export const InputComponent = (props: Props) => {
+export const InputComponent = (props) => {
   return (
     <div className="form-group">
       <label htmlFor={props.name}>
@@ -25,4 +16,13 @@ export const InputComponent = (props: Props) => {
       />
     </div>
   );
+};
+
+InputComponent.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired,
+  type: React.PropTypes.string.isRequired,
+  value: React.PropTypes.string.isRequired,
+  placeholder: React.PropTypes.string,
+  onChange: React.PropTypes.func.isRequired,
 }

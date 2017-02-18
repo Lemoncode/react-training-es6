@@ -6,11 +6,34 @@ In this sample we are going to implement a Login component with React.
 
 Summary steps:
 
+- [babel-plugin-transform-object-rest-spread](https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-object-rest-spread) to use object spread operator.
 - Build login component.
 - Interact with fake API.
 - Login notification displaying on success or fail.
 
 ## Steps to build it
+
+- Let's install babel-plugin-transform-object-rest-spread to work with object spread operator:
+
+ ```
+ npm install babel-plugin-transform-object-rest-spread --save-dev
+ ```
+
+- Now, we have to add a babel configuration file:
+
+### .babelrc
+```diff
+{
+  "presets": [
+    "env",
+    "react",
+  ],
++ "plugins": [
++   "transform-object-rest-spread"
++ ]
+}
+
+```
 
 - Delete _./src/hello.jsx_ and _./src/helloStyles.css_ files.
 
@@ -51,7 +74,7 @@ export const LoginPage = () => {
 ```javascript
 import * as React from 'react';
 import {LoginPage} from './pages/login/page';
-const classNames: any = require('./appStyles');
+import classNames from './appStyles';
 
 export const App = () => {
   return (
@@ -66,7 +89,7 @@ export const App = () => {
 - Update _./src/index.jsx_ to use App component:
 
 ### ./src/index.jsx
-```javascript
+```diff
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 - import {HelloComponent} from './hello';
@@ -102,7 +125,7 @@ export const HeaderComponent = () => {
 - And using it in LoginPage
 
 ### ./src/pages/login/page.jsx
-```javascript
+```diff
 import * as React from 'react';
 + import {HeaderComponent} from './components/header';
 
@@ -147,12 +170,7 @@ export class LoginCredentials {
 import * as React from 'react';
 import {LoginCredentials} from '../../../models/loginCredentials';
 
-interface Props {
-  loginCredentials: LoginCredentials;
-  updateLoginInfo: (fieldName: string, value: string) => void;
-}
-
-export const FormComponent = (props: Props) => {
+export const FormComponent = (props) => {
   const updateLoginInfo = (event) => {
     const fieldName = event.target.name;
     const value = event.target.value;
@@ -199,23 +217,24 @@ export const FormComponent = (props: Props) => {
   );
 };
 
+FormComponent.propTypes = {
+  loginCredentials: React.PropTypes.instanceOf(LoginCredentials).isRequired,
+  updateLoginInfo: React.PropTypes.func.isRequired,
+}
+
 ```
 
 - Now it's time to give state to our **Login Page** and pass properties to **FormComponent**:
 
 ### ./src/pages/login/page.jsx
-```javascript
+```diff
 import * as React from 'react';
 + import {LoginCredentials} from '../../models/loginCredentials';
 import {HeaderComponent} from './components/header';
 + import {FormComponent} from './components/form';
 
-+ interface State {
-+   loginCredentials: LoginCredentials;
-+ }
-
 - export const LoginPage = () => {
-+ export class LoginPage extends React.Component <{}, State> {  
++ export class LoginPage extends React.Component {  
 +   constructor() {
 +     super();
 +      
@@ -234,12 +253,12 @@ import {HeaderComponent} from './components/header';
   // We are use a JavaScript proposal named object spread operator
   // https://github.com/sebmarkbage/ecmascript-rest-spread
   // http://stackoverflow.com/questions/32925460/spread-operator-vs-object-assign
-+   private updateLoginInfo(fieldName: string, value: string) {
++   private updateLoginInfo(fieldName, value) {
 +     this.setState({
 +       loginCredentials: {
 +         ...this.state.loginCredentials,
 +         [fieldName]: value,
-+       }
++       },
 +     });
 +   }
 +
@@ -270,16 +289,7 @@ import {HeaderComponent} from './components/header';
 ```javascript
 import * as React from 'react';
 
-interface Props {
-  label: string;
-  name: string;
-  type: string;
-  value: string;
-  placeholder?: string;
-  onChange: any;
-}
-
-export const InputComponent = (props: Props) => {
+export const InputComponent = (props) => {
   return (
     <div className="form-group">
       <label htmlFor={props.name}>
@@ -295,6 +305,15 @@ export const InputComponent = (props: Props) => {
       />
     </div>
   );
+};
+
+InputComponent.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired,
+  type: React.PropTypes.string.isRequired,
+  value: React.PropTypes.string.isRequired,
+  placeholder: React.PropTypes.string,
+  onChange: React.PropTypes.func.isRequired,
 }
 
 ```
@@ -302,17 +321,12 @@ export const InputComponent = (props: Props) => {
 - Now, we can reuse InputComponent:
 
 ### ./src/pages/login/components/form.jsx
-```javascript
+```diff
 import * as React from 'react';
 import {LoginCredentials} from '../../../models/loginCredentials';
-+ import {InputComponent} from '../../../common/components/input';
++ import {InputComponent} from '../../../common/components/form/input';
 
-interface Props {
-  loginCredentials: LoginCredentials;
-  updateLoginInfo: (fieldName: string, value: string) => void;
-}
-
-export const FormComponent = (props: Props) => {
+export const FormComponent = (props) => {
   const updateLoginInfo = (event) => {
     const fieldName = event.target.name;
     const value = event.target.value;
@@ -374,6 +388,12 @@ export const FormComponent = (props: Props) => {
     </div>
   );
 };
+
+FormComponent.propTypes = {
+  loginCredentials: React.PropTypes.instanceOf(LoginCredentials).isRequired,
+  updateLoginInfo: React.PropTypes.func.isRequired,
+}
+
 ```
 
 ## Create fake API

@@ -1,12 +1,8 @@
 import * as React from 'react';
 import {LoginCredentials} from '../../../models/loginCredentials';
+import {InputComponent} from '../../../common/components/form/input';
 
-interface Props {
-  loginCredentials: LoginCredentials;
-  updateLoginInfo: (fieldName: string, value: string) => void;
-}
-
-export const FormComponent = (props: Props) => {
+export const FormComponent = (props) => {
   const updateLoginInfo = (event) => {
     const fieldName = event.target.name;
     const value = event.target.value;
@@ -16,32 +12,22 @@ export const FormComponent = (props: Props) => {
   return (
     <div className="panel-body">
       <form role="form">
-        <div className="form-group">
-          <label htmlFor="login">
-            Login
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Login"
-            name="login"
-            value={props.loginCredentials.login}
-            onChange={updateLoginInfo.bind(this)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">
-            Password
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder="Password"
-            name="password"
-            value={props.loginCredentials.password}
-            onChange={updateLoginInfo.bind(this)}
-          />
-        </div>
+        <InputComponent
+          label="Login"
+          type="text"
+          name="login"
+          placeholder="Login"
+          value={props.loginCredentials.login}
+          onChange={updateLoginInfo.bind(this)}
+        />
+        <InputComponent
+          label="Password"
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={props.loginCredentials.password}
+          onChange={updateLoginInfo.bind(this)}
+        />
         <button
           type="submit"
           className="btn btn-lg btn-success btn-block"
@@ -52,3 +38,8 @@ export const FormComponent = (props: Props) => {
     </div>
   );
 };
+
+FormComponent.propTypes = {
+  loginCredentials: React.PropTypes.instanceOf(LoginCredentials).isRequired,
+  updateLoginInfo: React.PropTypes.func.isRequired,
+}

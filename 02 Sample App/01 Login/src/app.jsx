@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {LoginPage} from './pages/login/page';
-const classNames: any = require('./appStyles');
+import classNames from './appStyles';
 
 export const App = () => {
   return (

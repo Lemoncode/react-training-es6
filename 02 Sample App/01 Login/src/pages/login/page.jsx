@@ -3,11 +3,7 @@ import {LoginCredentials} from '../../models/loginCredentials';
 import {HeaderComponent} from './components/header';
 import {FormComponent} from './components/form';
 
-interface State {
-  loginCredentials: LoginCredentials;
-}
-
-export class LoginPage extends React.Component<{}, State> {
+export class LoginPage extends React.Component {
   constructor() {
     super();
 
@@ -26,7 +22,7 @@ export class LoginPage extends React.Component<{}, State> {
   // We are use a JavaScript proposal named object spread operator
   // https://github.com/sebmarkbage/ecmascript-rest-spread
   // http://stackoverflow.com/questions/32925460/spread-operator-vs-object-assign
-  private updateLoginInfo(fieldName, value) {
+  updateLoginInfo(fieldName, value) {
     this.setState({
       loginCredentials: {
         ...this.state.loginCredentials,
@@ -35,7 +31,7 @@ export class LoginPage extends React.Component<{}, State> {
     });
   }
 
-  public render() {
+  render() {
     return (
       <div className="container">
         <div className="row">

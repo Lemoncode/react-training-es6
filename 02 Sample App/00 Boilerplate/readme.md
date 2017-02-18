@@ -11,8 +11,8 @@ Summary steps:
 - Initialize **package.json** (with `npm init`)
 - Install:
     - [Webpack 2](https://github.com/webpack/webpack) and [webpack-dev-server 2](https://github.com/webpack/webpack-dev-server) and loaders.
-    - [babel-preset-env]() to enable es6 polyfills.
-    - [babel-preset-react]() to work with JSX.
+    - [babel-preset-env](https://github.com/babel/babel-preset-env) to enable es6 polyfills.
+    - [babel-preset-react](https://github.com/babel/babel/tree/master/packages/babel-preset-react) to work with JSX.
     - [Bootstrap](https://github.com/twbs/bootstrap).
     - [React and ReactDOM](https://github.com/facebook/react).
     - [React router](https://github.com/reacttraining/react-router) for navigation.
