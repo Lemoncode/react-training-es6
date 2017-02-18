@@ -434,18 +434,10 @@ export const TrainingEditPage = () => {
 ### ./src/common/components/datePickerModal/datePickerModal.jsx
 ```javascript
 import * as React from 'react';
-import * as Modal from 'react-modal';
-import {Moment} from 'moment';
-const classNames: any = require('./datePickerModalStyles');
+import Modal from 'react-modal';
+import classNames from './datePickerModalStyles';
 
-interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  selectedDate: number;
-  onChange: (selectedDate: Moment) => void;
-}
-
-export const DatePickerModalComponent = (props: Props) => {
+export const DatePickerModalComponent = (props) => {
   return (
     <Modal
       isOpen={props.isOpen}
@@ -458,6 +450,13 @@ export const DatePickerModalComponent = (props: Props) => {
     </Modal>
   );
 };
+
+DatePickerModalComponent.propTypes = {
+  isOpen: React.PropTypes.bool.isRequired,
+  onClose: React.PropTypes.func.isRequired,
+  selectedDate: React.PropTypes.number.isRequired,
+  onChange: React.PropTypes.func.isRequired,
+}
 
 ```
 
@@ -481,22 +480,54 @@ export const DatePickerModalComponent = (props: Props) => {
 
 ```
 
+- How it looks like:
+
+### ./src/common/components/datePickerModal/index.js
+```javascript
+import {DatePickerModalComponent} from './datePickerModal';
+
+export {
+  DatePickerModalComponent,
+}
+
+```
+
+### ./src/pages/training/edit/components/trainingForm.jsx
+```diff
++ import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
+...
+    <InputButtonComponent
+      className="col-md-6"
+      type="text"
+      label="Start date"
+      name="startDate"
+      placeholder="Start date"
+      value={moment(this.props.training.startDate).format('YYYY-MM-DD')}
+      onChange={this.onChange}
+      disabled
+      buttonClassName="btn btn-default"
+      onClick={() => {}}
+      icon="glyphicon glyphicon-calendar"
+    />
+
++   <DatePickerModalComponent
++     isOpen={true}
++     onClose={() => {}}
++     selectedDate={0}
++     onChange={() => {}}
++   />
+
+...
+```
+
 ### ./src/common/components/datePickerModal/components/datePicker.jsx
 ```javascript
 import * as React from 'react';
-import {Moment} from 'moment';
 import {AutoSizer} from 'react-virtualized';
-const ReactCalendar: any = require('react-infinite-calendar');
-const InfiniteCalendar = ReactCalendar.default;
-const classNames: any = require('./datePickerStyles');
+import InfiniteCalendar from 'react-infinite-calendar';
+import classNames from './datePickerStyles';
 
-interface Props {
-  onClose: () => void;
-  selectedDate: number;
-  onChange: (selectedDate: Moment) => void;
-}
-
-export const DatePickerComponent = (props: Props) => {
+export const DatePickerComponent = (props) => {
   return (
     <AutoSizer>
     {
@@ -522,6 +553,12 @@ export const DatePickerComponent = (props: Props) => {
   );
 };
 
+DatePickerComponent.propTypes = {
+  onClose: React.PropTypes.func.isRequired,
+  selectedDate: React.PropTypes.number.isRequired,
+  onChange: React.PropTypes.func.isRequired,
+}
+
 ```
 
 ### ./src/common/components/datePickerModal/components/datePickerStyles.css
@@ -538,19 +575,11 @@ export const DatePickerComponent = (props: Props) => {
 - Updating _DatePickerModalComponent_:
 
 ### ./src/common/components/datePickerModal/datePickerModal.jsx
-```javascript
+```diff
 import * as React from 'react';
-import * as Modal from 'react-modal';
-import {Moment} from 'moment';
+import Modal from 'react-modal';
 + import {DatePickerComponent} from './components/datePicker';
-const classNames: any = require('./datePickerModalStyles');
-
-interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  selectedDate: number;
-  onChange: (selectedDate: Moment) => void;
-}
+import classNames from './datePickerModalStyles';
 
 export const DatePickerModalComponent = (props: Props) => {
   return (
@@ -561,14 +590,22 @@ export const DatePickerModalComponent = (props: Props) => {
       className={`${classNames.modal} modal-dialog modal-open`}
       overlayClassName={classNames.overlay}
     >
-      <DatePickerComponent
-        onClose={props.onClose}
-        selectedDate={props.selectedDate}
-        onChange={props.onChange}
-      />
+-     <h1>This is a modal</h1>
++     <DatePickerComponent
++       onClose={props.onClose}
++       selectedDate={props.selectedDate}
++       onChange={props.onChange}
++     />
     </Modal>
   );
 };
+
+DatePickerModalComponent.propTypes = {
+  isOpen: React.PropTypes.bool.isRequired,
+  onClose: React.PropTypes.func.isRequired,
+  selectedDate: React.PropTypes.number.isRequired,
+  onChange: React.PropTypes.func.isRequired,
+}
 
 ```
 
@@ -592,7 +629,7 @@ import {Training} from '../../../../models/training';
 import {InputComponent} from '../../../../common/components/form/input';
 import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
 import {InputButtonComponent} from '../../../../common/components/form/inputButton';
-+ import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
+import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
 + import {formatConstants} from '../../../../common/constants/formatConstants';
 
 interface Props {

@@ -3,6 +3,7 @@ import moment from 'moment';
 import {InputComponent} from '../../../../common/components/form/input';
 import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
 import {InputButtonComponent} from '../../../../common/components/form/inputButton';
+import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
 
 export class TrainingFormComponent extends React.Component {
   constructor() {
@@ -81,6 +82,13 @@ export class TrainingFormComponent extends React.Component {
             buttonClassName="btn btn-default"
             onClick={() => {}}
             icon="glyphicon glyphicon-calendar"
+          />
+
+          <DatePickerModalComponent
+            isOpen={true}
+            onClose={() => {}}
+            selectedDate={0}
+            onChange={() => {}}
           />
 
           <InputButtonComponent
