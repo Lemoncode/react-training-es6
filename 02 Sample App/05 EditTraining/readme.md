@@ -16,23 +16,22 @@ Summary steps:
 
 ## Steps to build it
 
-- Install [react-infinite-calendar](https://github.com/clauderic/react-infinite-calendar) and [react-addons-css-transition-group](https://www.npmjs.com/package/react-addons-css-transition-group) dependency. This library has not typings, so we have to import using [webpack-env](https://www.npmjs.com/package/@types/webpack-env) `require` method:
+- Install [react-infinite-calendar](https://github.com/clauderic/react-infinite-calendar) and [react-addons-css-transition-group](https://www.npmjs.com/package/react-addons-css-transition-group) dependency:
 
 ```
 npm install react-infinite-calendar react-addons-css-transition-group --save
 ```
 
-- Install [moment](https://github.com/moment/moment) to work with Dates. This library has typings for TypeScript:
+- Install [moment](https://github.com/moment/moment) to work with Dates:
 
 ```
 npm install moment --save
 ```
 
-- Install [react-modal](https://github.com/reactjs/react-modal) and typings to open calendar as modal window:
+- Install [react-modal](https://github.com/reactjs/react-modal) to open calendar as modal window:
 
 ```
 npm install react-modal --save
-npm install @types/react-modal --save-dev
 ```
 
 - Add libraries as vendor and vendorStyles:
@@ -61,7 +60,7 @@ entry: {
 
 - We can start to create a blank TrainingEditPage, to work with navigation:
 
-### ./src/pages/training/edit/page.tsx
+### ./src/pages/training/edit/page.jsx
 
 ```javascript
 import * as React from 'react';
@@ -76,7 +75,7 @@ export const TrainingEditPage = () => {
 
 - Add route constant:
 
-### ./src/common/constants/routeConstants.ts
+### ./src/common/constants/routeConstants.js
 ```javascript
 const trainingRoute = '/training';
 
@@ -93,7 +92,7 @@ export const routeConstants = {
 
 - And route:
 
-### ./src/routes.tsx
+### ./src/routes.jsx
 ```javascript
 import * as React from 'react';
 import {Route, IndexRoute} from 'react-router';
@@ -115,7 +114,7 @@ export const AppRoutes = (
 
 - Finally, update _TrainingRowComponent_ to navigate to TrainingEditPage by training Id:
 
-### ./src/pages/training/list/components/trainingRow.tsx
+### ./src/pages/training/list/components/trainingRow.jsx
 ```javascript
 import * as React from 'react';
 + import {Link} from 'react-router';
@@ -160,7 +159,7 @@ export const TrainingRowComponent = (props: Props) => {
   We're going to move input component to _./src/common/components/form_ folder because we'll create some form components
   and group them in this folder.
 
-### ./src/pages/login/components/form.tsx
+### ./src/pages/login/components/form.jsx
 ```javascript
 import * as React from 'react';
 import {LoginCredentials} from '../../../models/loginCredentials';
@@ -169,7 +168,7 @@ import {LoginCredentials} from '../../../models/loginCredentials';
 
 ```
 
-### ./src/common/components/form/input.tsx
+### ./src/common/components/form/input.jsx
 ```javascript
 import * as React from 'react';
 
@@ -209,7 +208,7 @@ import * as React from 'react';
 
 ```
 
-### ./src/common/components/form/inputButton.tsx
+### ./src/common/components/form/inputButton.jsx
 ```javascript
 import * as React from 'react';
 import {InputProps} from './input';
@@ -249,7 +248,7 @@ export const InputButtonComponent = (props: Props) => {
 
 ```
 
-### ./src/common/components/form/checkbox.tsx
+### ./src/common/components/form/checkbox.jsx
 ```javascript
 import * as React from 'react';
 
@@ -282,7 +281,7 @@ export const CheckBoxComponent = (props: Props) => {
 
 - Building TrainingFormComponent:
 
-### ./src/pages/training/edit/components/trainingForm.tsx
+### ./src/pages/training/edit/components/trainingForm.jsx
 ```javascript
 import * as React from 'react';
 import * as moment from 'moment';
@@ -419,7 +418,7 @@ export class TrainingFormComponent extends React.Component<Props, {}> {
 
 - Now it's time to create the _DatePickerModalComponent_:
 
-### ./src/common/components/datePickerModal/datePickerModal.tsx
+### ./src/common/components/datePickerModal/datePickerModal.jsx
 ```javascript
 import * as React from 'react';
 import * as Modal from 'react-modal';
@@ -469,7 +468,7 @@ export const DatePickerModalComponent = (props: Props) => {
 
 ```
 
-### ./src/common/components/datePickerModal/components/datePicker.tsx
+### ./src/common/components/datePickerModal/components/datePicker.jsx
 ```javascript
 import * as React from 'react';
 import {Moment} from 'moment';
@@ -525,7 +524,7 @@ export const DatePickerComponent = (props: Props) => {
 
 - Updating _DatePickerModalComponent_:
 
-### ./src/common/components/datePickerModal/datePickerModal.tsx
+### ./src/common/components/datePickerModal/datePickerModal.jsx
 ```javascript
 import * as React from 'react';
 import * as Modal from 'react-modal';
@@ -562,7 +561,7 @@ export const DatePickerModalComponent = (props: Props) => {
 
 - Extract date format to a constants:
 
-### ./src/common/constants/formatConstants.ts
+### ./src/common/constants/formatConstants.js
 ```javascript
 export const formatConstants = {
   shortDate: 'YYYY-MM-DD',
@@ -572,7 +571,7 @@ export const formatConstants = {
 
 - Updating _TrainingFormComponent_:
 
-### ./src/pages/training/edit/components/trainingForm.tsx
+### ./src/pages/training/edit/components/trainingForm.jsx
 ```javascript
 import * as React from 'react';
 import * as moment from 'moment';
@@ -753,7 +752,7 @@ interface Props {
 
 - Before start using TrainingFormComponent, we are going to update trainingAPI:
 
-### ./src/rest-api/training/trainingAPI.ts
+### ./src/rest-api/training/trainingAPI.js
 
 ```javascript
 import {Training} from '../../models/training';
@@ -805,7 +804,7 @@ export const trainingAPI = new TrainingAPI();
 
 - Create _TrainingEditPageContainer_:
 
-### ./src/pages/training/edit/pageContainer.tsx
+### ./src/pages/training/edit/pageContainer.jsx
 ```javascript
 import * as React from 'react';
 import * as toastr from 'toastr';
@@ -887,7 +886,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
 
 - Update route:
 
-### ./src/routes.tsx
+### ./src/routes.jsx
 ```javascript
 import * as React from 'react';
 import {Route, IndexRoute} from 'react-router';
@@ -911,7 +910,7 @@ export const AppRoutes = (
 
 - Update _TrainingEditPage_:
 
-### ./src/pages/training/edit/page.tsx
+### ./src/pages/training/edit/page.jsx
 
 ```javascript
 import * as React from 'react';
@@ -943,7 +942,7 @@ import * as React from 'react';
 
 - Too much lines on _TrainingFormComponent_? Ok, let's go to create container:
 
-### ./src/pages/training/edit/components/trainingForm.tsx
+### ./src/pages/training/edit/components/trainingForm.jsx
 ```javascript
 import * as React from 'react';
 import * as moment from 'moment';
@@ -1157,7 +1156,7 @@ interface Props {
 
 - Create _TrainingFormComponentContainer_:
 
-### ./src/pages/training/edit/components/trainingFormContainer.tsx
+### ./src/pages/training/edit/components/trainingFormContainer.jsx
 ```javascript
 import * as React from 'react';
 import * as moment from 'moment';
@@ -1257,7 +1256,7 @@ export class TrainingFormComponentContainer extends React.Component<Props, State
 
 - Update _TrainingEditPage_:
 
-### ./src/pages/training/edit/page.tsx
+### ./src/pages/training/edit/page.jsx
 ```javascript
 import * as React from 'react';
 import {Training} from '../../../models/training';
