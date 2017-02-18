@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {App} from './app';
+import {Router, hashHistory} from 'react-router';
+import {AppRoutes} from './routes';
 
 ReactDOM.render(
-  <App />,
+  <Router history={hashHistory} routes={AppRoutes} />,
   document.getElementById('root'),
 );

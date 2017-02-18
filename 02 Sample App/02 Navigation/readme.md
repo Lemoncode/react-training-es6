@@ -14,7 +14,7 @@ Summary steps:
 
 - We will start to define route constants file:
 
-### ./src/common/constants/routeConstants.ts
+### ./src/common/constants/routeConstants.js
 ```javascript
 export const routeConstants = {
   default: '/',
@@ -24,7 +24,7 @@ export const routeConstants = {
 
 - And now create AppRoutes component where we can define which route maps to component:
 
-### ./src/routes.tsx
+### ./src/routes.jsx
 ```javascript
 import * as React from 'react';
 import {Route, IndexRoute} from 'react-router';
@@ -42,17 +42,17 @@ export const AppRoutes = (
 
 - Due to we are render LoginPageContainer inside App component via React-Router, we need to update App component:
 
-### ./src/app.tsx
-```javascript
+### ./src/app.jsx
+```diff
 import * as React from 'react';
 - import {LoginPageContainer} from './pages/login/pageContainer';
-const classNames: any = require('./appStyles');
+import classNames from './appStyles';
 
 // With this.props.children we are placing App children components
 // where we want to render it.
 - export const App = () => {
-+ export class App extends React.Component<{}, {}> {
-+   public render() {
++ export class App extends React.Component {
++   render() {
       return (
         <div className={`container-fluid ${classNames.app}`}>
 -         <LoginPageContainer />
@@ -64,10 +64,10 @@ const classNames: any = require('./appStyles');
 
 ```
 
-- And finally, we only need to update _index.tsx_ entry point:
+- And finally, we only need to update _index.jsx_ entry point:
 
-### ./src/index.tsx
-```javascript
+### ./src/index.jsx
+```diff
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 - import {App} from './app';
@@ -84,7 +84,7 @@ ReactDOM.render(
 
 - Now, we are going to create a blank component to simulate a navigation after login:
 
-### ./src/pages/training/list/page.tsx
+### ./src/pages/training/list/page.jsx
 ```javascript
 import * as React from 'react';
 
@@ -98,8 +98,8 @@ export const TrainingListPage = () => {
 
 - For navigate to this component we are define a new route:
 
-### ./src/common/constants/routeConstants.ts
-```javascript
+### ./src/common/constants/routeConstants.js
+```diff
 + const trainingRoute = '/training';
 
 export const routeConstants = {
@@ -111,8 +111,8 @@ export const routeConstants = {
 
 ```
 
-### ./src/routes.tsx
-```javascript
+### ./src/routes.jsx
+```diff
 import * as React from 'react';
 import {Route, IndexRoute} from 'react-router';
 import {routeConstants} from './common/constants/routeConstants';
@@ -131,7 +131,7 @@ export const AppRoutes = (
 
 - Lastly, we need to do something to navigate to TrainingListPage component. But instead of using [Link component from React-Router](https://github.com/reactjs/react-router-tutorial/tree/master/lessons/03-navigating-with-link) we need navigate after check loginCredentials:
 
-### ./src/pages/login/pageContainer.tsx
+### ./src/pages/login/pageContainer.jsx
 ```javascript
 import * as React from 'react';
 import * as toastr from 'toastr';
@@ -139,14 +139,9 @@ import * as toastr from 'toastr';
 + import {routeConstants} from '../../common/constants/routeConstants';
 import {loginAPI} from '../../rest-api/login/loginAPI';
 import {LoginCredentials} from '../../models/loginCredentials';
-import {UserProfile} from '../../models/userProfile';
 import {LoginPage} from './page';
 
-interface State {
-  loginCredentials: LoginCredentials;
-}
-
-export class LoginPageContainer extends React.Component <{}, State> {
+export class LoginPageContainer extends React.Component {
   constructor() {
     super();
 
@@ -166,19 +161,19 @@ export class LoginPageContainer extends React.Component <{}, State> {
   // https://github.com/sebmarkbage/ecmascript-rest-spread
   // http://stackoverflow.com/questions/32925460/spread-operator-vs-object-assign
 
-  private updateLoginInfo(fieldName: string, value: string) {
+  updateLoginInfo(fieldName, value) {
     this.setState({
       loginCredentials: {
         ...this.state.loginCredentials,
         [fieldName]: value,
-      }
+      },
     });
   }
 
-  private loginRequest(loginCredentials: LoginCredentials) {
+  loginRequest(loginCredentials) {
     toastr.remove();
     loginAPI.login(loginCredentials)
-      .then((userProfile: UserProfile) => {
+      .then((userProfile) => {
         toastr.success(`Success login ${userProfile.fullname}`);
 +       hashHistory.push(routeConstants.training.list);
       })
@@ -187,7 +182,7 @@ export class LoginPageContainer extends React.Component <{}, State> {
       });
   }
 
-  public render() {
+  render() {
     return (
       <LoginPage
         loginCredentials={this.state.loginCredentials}
