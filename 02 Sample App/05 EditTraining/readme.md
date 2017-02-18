@@ -300,17 +300,17 @@ export class TrainingFormComponent extends React.Component {
     this.props.onChange(fieldName, value);
   }
 
-  onChangeStartDate(date: moment.Moment) {
+  onChangeStartDate(date) {
     this.onChangeDate('startDate', date);
     this.toggleOpenStartDateModal();
   }
 
-  onChangeEndDate(date: moment.Moment) {
+  onChangeEndDate(date) {
     this.onChangeDate('endDate', date);
     this.toggleOpenEndDateModal();
   }
 
-  onChangeDate(fieldName: string, date: moment.Moment) {
+  onChangeDate(fieldName, date) {
     const milliseconds = date.valueOf();
     this.props.onChange(fieldName, milliseconds);
   }
@@ -527,6 +527,7 @@ import {AutoSizer} from 'react-virtualized';
 import InfiniteCalendar from 'react-infinite-calendar';
 import classNames from './datePickerStyles';
 
+// https://github.com/clauderic/react-infinite-calendar/issues/60
 export const DatePickerComponent = (props) => {
   return (
     <AutoSizer>
@@ -581,7 +582,7 @@ import Modal from 'react-modal';
 + import {DatePickerComponent} from './components/datePicker';
 import classNames from './datePickerModalStyles';
 
-export const DatePickerModalComponent = (props: Props) => {
+export const DatePickerModalComponent = (props) => {
   return (
     <Modal
       isOpen={props.isOpen}
@@ -622,29 +623,16 @@ export const formatConstants = {
 - Updating _TrainingFormComponent_:
 
 ### ./src/pages/training/edit/components/trainingForm.jsx
-```javascript
+```diff
 import * as React from 'react';
 import moment from 'moment';
-import {Training} from '../../../../models/training';
 import {InputComponent} from '../../../../common/components/form/input';
 import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
 import {InputButtonComponent} from '../../../../common/components/form/inputButton';
 import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
 + import {formatConstants} from '../../../../common/constants/formatConstants';
 
-interface Props {
-  training: Training;
-  onChange: (fieldName: string, value: any) => void;
-  save: (training: Training) => void;
-}
-
-+ interface State {
-+  isOpenStartDateModal: boolean;
-+  isOpenEndDateModal: boolean;
-+}
-
-- export class TrainingFormComponent extends React.Component<Props, {}> {
-+ export class TrainingFormComponent extends React.Component<Props, State> {
+export class TrainingFormComponent extends React.Component {
   constructor() {
     super();
 
@@ -661,7 +649,7 @@ interface Props {
     this.save = this.save.bind(this);
   }
 
-  private onChange (event) {
+  onChange (event) {
     const fieldName = event.target.name;
     const value = event.target.type === 'checkbox' ?
       event.target.checked :
@@ -670,42 +658,42 @@ interface Props {
     this.props.onChange(fieldName, value);
   }
 
-  private onChangeStartDate(date: moment.Moment) {
+  onChangeStartDate(date) {
     this.onChangeDate('startDate', date);
     this.toggleOpenStartDateModal();
   }
 
-  private onChangeEndDate(date: moment.Moment) {
+  onChangeEndDate(date) {
     this.onChangeDate('endDate', date);
     this.toggleOpenEndDateModal();
   }
 
-  private onChangeDate(fieldName: string, date: moment.Moment) {
+  onChangeDate(fieldName, date) {
     const milliseconds = date.valueOf();
     this.props.onChange(fieldName, milliseconds);
   }
 
-+ private toggleOpenStartDateModal() {
++ toggleOpenStartDateModal() {
 +   this.toggleOpenModal('isOpenStartDateModal');
 + }
 
-+ private toggleOpenEndDateModal() {
++ toggleOpenEndDateModal() {
 +   this.toggleOpenModal('isOpenEndDateModal');
 + }
 
-+ private toggleOpenModal(fieldName) {
++ toggleOpenModal(fieldName) {
 +   this.setState({
 +     ...this.state,
 +     [fieldName]: !this.state[fieldName]
 +   });
 + }
 
-  private save(event) {
+  save(event) {
     event.preventDefault();
     this.props.save(this.props.training);
   }
 
-  public render() {
+  render() {
     return (
       <form className="container">
         <div className="row">
@@ -737,7 +725,8 @@ interface Props {
             label="Start date"
             name="startDate"
             placeholder="Start date"
-            value={moment(this.props.training.startDate).format('YYYY-MM-DD')}
+-           value={moment(this.props.training.startDate).format('YYYY-MM-DD')}
++           value={moment(this.props.training.startDate).format(formatConstants.shortDate)}
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
@@ -745,12 +734,16 @@ interface Props {
             icon="glyphicon glyphicon-calendar"
           />
 
-+         <DatePickerModalComponent
+          <DatePickerModalComponent
+-           isOpen={true}
 +           isOpen={this.state.isOpenStartDateModal}
+-           onClose={() => {}}
 +           onClose={this.toggleOpenStartDateModal}
+-           selectedDate={0}
 +           selectedDate={this.props.training.startDate}
+-           onChange={() => {}}
 +           onChange={this.onChangeStartDate}
-+         />
+          />
 
           <InputButtonComponent
             className="col-md-6"
@@ -758,7 +751,8 @@ interface Props {
             label="End date"
             name="endDate"
             placeholder="End date"
-            value={moment(this.props.training.endDate).format('YYYY-MM-DD')}
+-           value={moment(this.props.training.endDate).format('YYYY-MM-DD')}
++           value={moment(this.props.training.endDate).format(formatConstants.shortDate)}
             onChange={this.onChange}
             disabled
             buttonClassName="btn btn-default"
@@ -798,6 +792,19 @@ interface Props {
   }
 };
 
+TrainingFormComponent.propTypes = {
+  training: React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    url: React.PropTypes.string.isRequired,
+    startDate: React.PropTypes.number.isRequired,
+    endDate: React.PropTypes.number.isRequired,
+    isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  save: React.PropTypes.func.isRequired,
+}
+
 ```
 
 - Before start using TrainingFormComponent, we are going to update trainingAPI:
@@ -811,23 +818,23 @@ import {trainingsMockData} from './trainingMockData';
 // Fake API using es6 Promises polyfill (with core-js).
 // In future, we can replace by real one.
 class TrainingAPI {
-+ private trainings: Training[];
++ trainings: Training[];
 
 + constructor() {
 +   this.trainings = trainingsMockData;
 + }
 
-  public fetchTrainings(): Promise<Training[]> {
+  fetchTrainings(): Promise<Training[]> {
 -   return Promise.resolve(trainingsMockData);
 +   return Promise.resolve(this.trainings);
   }
 
-+ public fetchTrainingById(id: number): Promise<Training> {
++ fetchTrainingById(id: number): Promise<Training> {
 +   const training = this.trainings.find(t => t.id === id);
 +   return Promise.resolve(training);
 + }
 
-+ public save(training: Training): Promise<string> {
++ save(training: Training): Promise<string> {
 +   const index = this.trainings.findIndex(t => t.id === training.id);
 +
 +   return index >= 0 ?
@@ -837,7 +844,7 @@ class TrainingAPI {
 
 + // Just ensure no mutable data. Copy in new Array all items but replacing
 + // object to update by training from params.
-+ private saveTrainingByIndex(index, training) {
++ saveTrainingByIndex(index, training) {
 +   this.trainings = [
 +     ...this.trainings.slice(0, index),
 +     training,
@@ -882,11 +889,11 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
     this.save = this.save.bind(this);
   }
 
-  public componentDidMount() {
+  componentDidMount() {
     this.fetchTraining();
   }
 
-  private fetchTraining() {
+  fetchTraining() {
     const trainingId = Number(this.props.params.id) || 0;
     trainingAPI.fetchTrainingById(trainingId)
       .then((training) => {
@@ -900,7 +907,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
       });
   }
 
-  private onChange(fieldName, value) {
+  onChange(fieldName, value) {
     this.setState({
       training: {
         ...this.state.training,
@@ -909,7 +916,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
     });
   }
 
-  private save(training: Training) {
+  save(training: Training) {
     toastr.remove();
     trainingAPI.save(training)
       .then((message) => {
@@ -921,7 +928,7 @@ export class TrainingEditPageContainer extends React.Component<Props, State> {
       });
   }
 
-  public render() {
+  render() {
     return (
       <TrainingEditPage
         training={this.state.training}
@@ -1040,7 +1047,7 @@ interface Props {
 -     this.save = this.save.bind(this);
 -   }
 
--   private onChange (event) {
+-   onChange (event) {
 -     const fieldName = event.target.name;
 -     const value = event.target.type === 'checkbox' ?
 -       event.target.checked :
@@ -1049,42 +1056,42 @@ interface Props {
 -     this.props.onChange(fieldName, value);
 -   }
 
--   private onChangeStartDate(date: moment.Moment) {
+-   onChangeStartDate(date: moment.Moment) {
 -     this.onChangeDate('startDate', date);
 -     this.toggleOpenStartDateModal();
 -   }
 
--   private onChangeEndDate(date: moment.Moment) {
+-   onChangeEndDate(date: moment.Moment) {
 -     this.onChangeDate('endDate', date);
 -     this.toggleOpenEndDateModal();
 -   }
 
--   private onChangeDate(fieldName: string, date: moment.Moment) {
+-   onChangeDate(fieldName: string, date: moment.Moment) {
 -     const milliseconds = date.valueOf();
 -     this.props.onChange(fieldName, milliseconds);
 -   }
 
--   private toggleOpenStartDateModal() {
+-   toggleOpenStartDateModal() {
 -     this.toggleOpenModal('isOpenStartDateModal');
 -   }
 
--   private toggleOpenEndDateModal() {
+-   toggleOpenEndDateModal() {
 -     this.toggleOpenModal('isOpenEndDateModal');
 -   }
 
--   private toggleOpenModal(fieldName) {
+-   toggleOpenModal(fieldName) {
 -     this.setState({
 -       ...this.state,
 -       [fieldName]: !this.state[fieldName]
 -     });
 -   }
 
--   private save(event) {
+-   save(event) {
 -     event.preventDefault();
 -     this.props.save(this.props.training);
 -   }
 
--   public render() {
+-   render() {
       return (
         <form className="container">
           <div className="row">
@@ -1241,7 +1248,7 @@ export class TrainingFormComponentContainer extends React.Component<Props, State
     this.save = this.save.bind(this);
   }
 
-  private onChange (event) {
+  onChange (event) {
     const fieldName = event.target.name;
     const value = event.target.type === 'checkbox' ?
       event.target.checked :
@@ -1250,42 +1257,42 @@ export class TrainingFormComponentContainer extends React.Component<Props, State
     this.props.onChange(fieldName, value);
   }
 
-  private onChangeStartDate(date: moment.Moment) {
+  onChangeStartDate(date: moment.Moment) {
     this.onChangeDate('startDate', date);
     this.toggleOpenStartDateModal();
   }
 
-  private onChangeEndDate(date: moment.Moment) {
+  onChangeEndDate(date: moment.Moment) {
     this.onChangeDate('endDate', date);
     this.toggleOpenEndDateModal();
   }
 
-  private onChangeDate(fieldName: string, date: moment.Moment) {
+  onChangeDate(fieldName: string, date: moment.Moment) {
     const milliseconds = date.valueOf();
     this.props.onChange(fieldName, milliseconds);
   }
 
-  private toggleOpenStartDateModal() {
+  toggleOpenStartDateModal() {
     this.toggleOpenModal('isOpenStartDateModal');
   }
 
-  private toggleOpenEndDateModal() {
+  toggleOpenEndDateModal() {
     this.toggleOpenModal('isOpenEndDateModal');
   }
 
-  private toggleOpenModal(fieldName) {
+  toggleOpenModal(fieldName) {
     this.setState({
       ...this.state,
       [fieldName]: !this.state[fieldName]
     });
   }
 
-  private save(event) {
+  save(event) {
     event.preventDefault();
     this.props.save(this.props.training);
   }
 
-  public render() {
+  render() {
     return (
       <TrainingFormComponent
         training={this.props.training}

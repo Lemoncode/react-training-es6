@@ -3,6 +3,7 @@ import {AutoSizer} from 'react-virtualized';
 import InfiniteCalendar from 'react-infinite-calendar';
 import classNames from './datePickerStyles';
 
+// https://github.com/clauderic/react-infinite-calendar/issues/60
 export const DatePickerComponent = (props) => {
   return (
     <AutoSizer>

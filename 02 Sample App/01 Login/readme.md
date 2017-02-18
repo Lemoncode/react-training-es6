@@ -251,7 +251,7 @@ import {HeaderComponent} from './components/header';
   // We are use a JavaScript proposal named object spread operator
   // https://github.com/sebmarkbage/ecmascript-rest-spread
   // http://stackoverflow.com/questions/32925460/spread-operator-vs-object-assign
-+   private updateLoginInfo(fieldName, value) {
++   updateLoginInfo(fieldName, value) {
 +     this.setState({
 +       loginCredentials: {
 +         ...this.state.loginCredentials,
@@ -260,7 +260,7 @@ import {HeaderComponent} from './components/header';
 +     });
 +   }
 +
-+   public render() {
++   render() {
       return (
         <div className="row">
           <div className="col-md-4 col-md-offset-4">
@@ -454,7 +454,7 @@ export class LoginPage extends React.Component {
     };
   }
 
-  private updateLoginInfo(fieldName, value) {
+  updateLoginInfo(fieldName, value) {
     this.setState({
       loginCredentials: {
         ...this.state.loginCredentials,
@@ -576,7 +576,7 @@ import {FormComponent} from './components/form';
 -    };
 -  }
 
--  private updateLoginInfo(fieldName, value) {
+-  updateLoginInfo(fieldName, value) {
 -    this.setState({
 -      loginCredentials: {
 -        ...this.state.loginCredentials,
@@ -585,7 +585,7 @@ import {FormComponent} from './components/form';
 -    });
 -  }
 
--  private loginRequest(loginCredentials) {
+-  loginRequest(loginCredentials) {
 -    toastr.remove();
 -    loginAPI.login(loginCredentials)
 -      .then((userProfile) => {
@@ -596,7 +596,7 @@ import {FormComponent} from './components/form';
 -      });
 -  }
 
--  public render() {
+-  render() {
     return (
       <div className="row">
         <div className="col-md-4 col-md-offset-4">
