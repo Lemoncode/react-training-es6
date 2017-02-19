@@ -102,8 +102,7 @@ import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
 import {InputButtonComponent} from '../../../../common/components/form/inputButton';
 import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
 import {formatConstants} from '../../../../common/constants/formatConstants';
-+
-import {ValidationComponent} from '../../../../common/components/form/validation';
++ import {ValidationComponent} from '../../../../common/components/form/validation';
 
 export const TrainingFormComponent = (props: Props) => {
   return (
@@ -372,7 +371,7 @@ TrainingEditPageContainer.propTypes = {
 
 ```
 
-- Now it's time to create validations to feed these error:
+- Now it's time to create validations to feed this error:
 
 ### ./src/pages/training/edit/components/validations/trainingFormConstraints.js
 ```javascript
@@ -467,35 +466,7 @@ import {TrainingEditPage} from './page';
 import {trainingAPI} from '../../../rest-api/training/trainingAPI';
 + import {trainingFormValidations} from './components/validations/trainingFormValidations';
 
-export class TrainingEditPageContainer extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {
-      training: new Training(),
-      trainingErrors: new TrainingErrors(),
-    };
-    this.onChange = this.onChange.bind(this);
-    this.save = this.save.bind(this);
-  }
-
-  componentDidMount() {
-    this.fetchTraining();
-  }
-
-  fetchTraining() {
-    const trainingId = Number(this.props.params.id) || 0;
-    trainingAPI.fetchTrainingById(trainingId)
-      .then((training) => {
-        this.setState({
-          training: {...training}
-        })
-      })
-      .catch((error) => {
-        toastr.remove();
-        toastr.error(error);
-      });
-  }
+...
 
   onChange(fieldName, value) {
 +   const error = trainingFormValidations
