@@ -9,10 +9,10 @@ var SRC_DIR = path.join(__dirname, 'src');
 module.exports = {
   context: SRC_DIR,
   resolve: {
-    extensions: ['.js', '.ts', '.tsx']
+    extensions: ['.js', '.jsx']
   },
   entry: {
-    app: './index.tsx',
+    app: './index.jsx',
     vendor: [
       'react',
       'react-dom'
@@ -37,9 +37,9 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'awesome-typescript-loader'
+        loader: 'babel-loader'
       },
       {
         test: /\.css$/,
@@ -69,6 +69,11 @@ module.exports = {
     ]
   },
   plugins: [
+    // Caching vendors with manifest
+    // https://webpack.js.org/guides/code-splitting-libraries/#manifest-file
+    new webpack.optimize.CommonsChunkPlugin({
+      names: ['vendor', 'manifest'],
+    }),
     new ExtractTextPlugin({
       filename: '[name].css',
       disable: false,
