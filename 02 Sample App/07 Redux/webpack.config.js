@@ -23,6 +23,9 @@ module.exports = {
       'moment',
       'react-modal',
       'validate.js',
+      'redux',
+      'react-redux',
+      'redux-thunk',
     ],
     vendorStyles: [
       '../node_modules/bootstrap/dist/css/bootstrap.css',
