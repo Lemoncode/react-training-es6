@@ -1,13 +1,8 @@
 import * as React from 'react';
-import { User } from '../entity/User';
 import { PanelComponent } from '../components/panel-component/PanelComponent';
 import { UsersTableComponent } from '../components/user-table-component/UsersTableComponent';
 
-interface State {
-  users: User[];
-}
-
-class App extends React.Component<{}, State> {
+export class App extends React.Component {
   constructor(props) {
     super(props);
 
@@ -21,6 +16,7 @@ class App extends React.Component<{}, State> {
       ],
     };
   }
+
   render() {
     return (
       <PanelComponent title="Users summary">
@@ -29,7 +25,3 @@ class App extends React.Component<{}, State> {
     )
   }
 }
-
-export {
-  App
-};

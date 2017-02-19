@@ -3,6 +3,6 @@ import * as ReactDOM from 'react-dom';
 import { App } from './components/App';
 
 ReactDOM.render(
-  React.createElement(App),
+  <App />,
   document.getElementById('app')
 );

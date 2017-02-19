@@ -1,12 +1,7 @@
 import * as React from 'react';
-import { User } from '../../entity/User';
 import { UsersTableRowComponent } from './UsersTableRowComponent';
 
-interface Props {
-  users: User[]
-}
-
-const UsersTableComponent = (props: Props) => (
+export const UsersTableComponent = (props) => (
   <table className="table table-stripped table-condensed">
     <thead>
       <tr>
@@ -22,6 +17,14 @@ const UsersTableComponent = (props: Props) => (
   </table>
 );
 
-export {
-  UsersTableComponent
+UsersTableRowComponent.propTypes = {
+  users: React.PropTypes.arrayOf(
+    React.PropTypes.shape({
+      id: React.PropTypes.number,
+      name: React.PropTypes.string.isRequired,
+      dateRegistered: React.PropTypes.string.isRequired,
+      role: React.PropTypes.string.isRequired,
+      status: React.PropTypes.string.isRequired,
+    }).isRequired
+  ),
 };
