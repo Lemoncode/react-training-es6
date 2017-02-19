@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {Training} from '../../../models/training';
 import {TrainingFormComponentContainer} from './components/trainingFormContainer';
 
 export const TrainingEditPage = (props) => {
@@ -8,6 +7,7 @@ export const TrainingEditPage = (props) => {
       <h2 className="jumbotron">Edit Training</h2>
       <TrainingFormComponentContainer
         training={props.training}
+        trainingErrors={props.trainingErrors}
         onChange={props.onChange}
         save={props.save}
       />
@@ -23,6 +23,11 @@ TrainingEditPage.propTypes = {
     startDate: React.PropTypes.number.isRequired,
     endDate: React.PropTypes.number.isRequired,
     isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
+  trainingErrors: React.PropTypes.shape({
+    name: React.PropTypes.string,
+    url: React.PropTypes.string,
+    endDate: React.PropTypes.string,
   }).isRequired,
   onChange: React.PropTypes.func.isRequired,
   save: React.PropTypes.func.isRequired,

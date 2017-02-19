@@ -1322,7 +1322,7 @@ TrainingFormComponentContainer.propTypes = {
 ### ./src/pages/training/edit/page.jsx
 ```diff
 import * as React from 'react';
-import {Training} from '../../../models/training';
+- import {Training} from '../../../models/training';
 - import {TrainingFormComponent} from './components/trainingForm';
 + import {TrainingFormComponentContainer} from './components/trainingFormContainer';
 

@@ -5,30 +5,39 @@ import {CheckBoxComponent} from '../../../../common/components/form/checkBox';
 import {InputButtonComponent} from '../../../../common/components/form/inputButton';
 import {DatePickerModalComponent} from '../../../../common/components/datePickerModal';
 import {formatConstants} from '../../../../common/constants/formatConstants';
+import {ValidationComponent} from '../../../../common/components/form/validation';
 
 export const TrainingFormComponent = (props) => {
   return (
     <form className="container">
       <div className="row">
-        <InputComponent
+        <ValidationComponent
           className="col-md-6"
-          type="text"
-          label="Name"
-          name="name"
-          onChange={props.onChange}
-          value={props.training.name}
-          placeholder="Name"
-        />
+          error={props.trainingErrors.name}
+        >
+          <InputComponent
+            type="text"
+            label="Name"
+            name="name"
+            onChange={props.onChange}
+            value={props.training.name}
+            placeholder="Name"
+          />
+        </ValidationComponent>
 
-        <InputComponent
+        <ValidationComponent
           className="col-md-6"
-          type="text"
-          label="Url"
-          name="url"
-          onChange={props.onChange}
-          value={props.training.url}
-          placeholder="Url"
-        />
+          error={props.trainingErrors.url}
+        >
+          <InputComponent
+            type="text"
+            label="Url"
+            name="url"
+            onChange={props.onChange}
+            value={props.training.url}
+            placeholder="Url"
+          />
+        </ValidationComponent>
       </div>
 
       <div className="row">
@@ -53,19 +62,23 @@ export const TrainingFormComponent = (props) => {
           onChange={props.onChangeStartDate}
         />
 
-        <InputButtonComponent
+        <ValidationComponent
           className="col-md-6"
-          type="text"
-          label="End date"
-          name="endDate"
-          placeholder="End date"
-          value={moment(props.training.endDate).format(formatConstants.shortDate)}
-          onChange={props.onChange}
-          disabled
-          buttonClassName="btn btn-default"
-          onClick={props.toggleOpenEndDateModal}
-          icon="glyphicon glyphicon-calendar"
-        />
+          error={props.trainingErrors.endDate}
+        >
+          <InputButtonComponent
+            type="text"
+            label="End date"
+            name="endDate"
+            placeholder="End date"
+            value={moment(props.training.endDate).format(formatConstants.shortDate)}
+            onChange={props.onChange}
+            disabled
+            buttonClassName="btn btn-default"
+            onClick={props.toggleOpenEndDateModal}
+            icon="glyphicon glyphicon-calendar"
+          />
+        </ValidationComponent>
 
         <DatePickerModalComponent
           isOpen={props.isOpenEndDateModal}
@@ -110,6 +123,11 @@ TrainingFormComponent.propTypes = {
     startDate: React.PropTypes.number.isRequired,
     endDate: React.PropTypes.number.isRequired,
     isActive: React.PropTypes.bool.isRequired,
+  }).isRequired,
+  trainingErrors: React.PropTypes.shape({
+    name: React.PropTypes.string,
+    url: React.PropTypes.string,
+    endDate: React.PropTypes.string,
   }).isRequired,
   onChange: React.PropTypes.func.isRequired,
   save: React.PropTypes.func.isRequired,
