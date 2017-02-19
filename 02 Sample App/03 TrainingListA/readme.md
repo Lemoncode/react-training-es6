@@ -139,11 +139,12 @@ import {TrainingListPage} from './page';
 export class TrainingListPageContainer extends React.Component {
   constructor() {
     super();
-    this.fetchTrainings();
 
     this.state = {
       trainings: [],
     };
+
+    this.fetchTrainings();
   }
 
   // We are creating new array from trainings from API

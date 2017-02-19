@@ -132,7 +132,7 @@ export const AppRoutes = (
 - Lastly, we need to do something to navigate to TrainingListPage component. But instead of using [Link component from React-Router](https://github.com/reactjs/react-router-tutorial/tree/master/lessons/03-navigating-with-link) we need navigate after check loginCredentials:
 
 ### ./src/pages/login/pageContainer.jsx
-```javascript
+```diff
 import * as React from 'react';
 import * as toastr from 'toastr';
 + import {hashHistory} from 'react-router';

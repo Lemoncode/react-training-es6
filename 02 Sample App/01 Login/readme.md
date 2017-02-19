@@ -499,7 +499,7 @@ export class LoginPage extends React.Component {
 ### ./src/pages/login/components/form.jsx
 ```diff
 import * as React from 'react';
-import {InputComponent} from '../../../common/components/input';
+import {InputComponent} from '../../../common/components/form/input';
 
 export const FormComponent = (props) => {
   const updateLoginInfo = (event) => {
@@ -693,7 +693,7 @@ export class LoginPageContainer extends React.Component {
 - And of course, calls LoginPageContainer instead LoginPage in App component:
 
 ### ./src/app.jsx
-```javascript
+```diff
 import * as React from 'react';
 - import {LoginPage} from './pages/login/page';
 + import {LoginPageContainer} from './pages/login/pageContainer';

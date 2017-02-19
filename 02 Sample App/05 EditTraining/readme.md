@@ -419,11 +419,17 @@ TrainingFormComponent.propTypes = {
 ### ./src/pages/training/edit/page.jsx
 ```diff
 import * as React from 'react';
++ import {Training} from '../../../models/training';
 + import {TrainingFormComponent} from './components/trainingForm';
 
 export const TrainingEditPage = () => {
   return (
-    <div>Training Edit page</div>
+-   <div>Training Edit page</div>
++   <TrainingFormComponent
++     training={new Training()}
++     onChange={() => {}}
++     save={() => {}}
++   />
   );
 }
 
@@ -518,6 +524,7 @@ export {
 +   />
 
 ...
+
 ```
 
 ### ./src/common/components/datePickerModal/components/datePicker.jsx
