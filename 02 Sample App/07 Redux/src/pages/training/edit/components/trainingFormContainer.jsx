@@ -24,7 +24,7 @@ export class TrainingFormComponentContainer extends React.Component {
       event.target.checked :
       event.target.value;
 
-    this.props.onChange(fieldName, value);
+    this.props.onChange(this.props.training, fieldName, value);
   }
 
   onChangeStartDate(date) {
@@ -39,7 +39,7 @@ export class TrainingFormComponentContainer extends React.Component {
 
   onChangeDate(fieldName, date) {
     const milliseconds = date.valueOf();
-    this.props.onChange(fieldName, milliseconds);
+    this.props.onChange(this.props.training, fieldName, milliseconds);
   }
 
   toggleOpenStartDateModal() {

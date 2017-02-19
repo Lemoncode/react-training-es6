@@ -1,0 +1,4 @@
+export const loginActionConstants = {
+  LOGIN_REQUEST: 'LOGIN_REQUEST',
+  LOGIN_CONTENT_CHANGED: 'LOGIN_CONTENT_CHANGED',
+};

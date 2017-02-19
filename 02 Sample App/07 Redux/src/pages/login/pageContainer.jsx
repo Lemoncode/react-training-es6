@@ -1,58 +1,21 @@
 import * as React from 'react';
-import * as toastr from 'toastr';
-import {hashHistory} from 'react-router';
-import {routeConstants} from '../../common/constants/routeConstants';
-import {loginAPI} from '../../rest-api/login/loginAPI';
-import {LoginCredentials} from '../../models/loginCredentials';
+import {connect} from 'react-redux';
+import {loginContentChangedAction} from './actions/loginContentChanged';
+import {loginRequestAction} from './actions/loginRequest';
 import {LoginPage} from './page';
 
-export class LoginPageContainer extends React.Component {
-  constructor() {
-    super();
+const mapStateToProps = (state) => ({
+  loginCredentials: state.login.loginCredentials,
+});
 
-    this.state = {
-      loginCredentials: new LoginCredentials(),
-    };
-  }
+const mapDispatchToProps = (dispatch) => ({
+  updateLoginInfo: (fieldName, value) =>
+    dispatch(loginContentChangedAction(fieldName, value)),
+  loginRequest: (loginCredentials) =>
+    dispatch(loginRequestAction(loginCredentials)),
+});
 
-  // Other way to assign new object to loginCredentials to avoid mutation is:
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
-  /*
-    var newLoginCredentiasl = Object.assign({}, this.state.loginCredentials, {
-      [fieldName]: value,
-    });
-  */
-  // We are use a JavaScript proposal named object spread operator
-  // https://github.com/sebmarkbage/ecmascript-rest-spread
-  // http://stackoverflow.com/questions/32925460/spread-operator-vs-object-assign
-  updateLoginInfo(fieldName, value) {
-    this.setState({
-      loginCredentials: {
-        ...this.state.loginCredentials,
-        [fieldName]: value,
-      },
-    });
-  }
-
-  loginRequest(loginCredentials) {
-    toastr.remove();
-    loginAPI.login(loginCredentials)
-      .then((userProfile) => {
-        toastr.success(`Success login ${userProfile.fullname}`);
-        hashHistory.push(routeConstants.training.list);
-      })
-      .catch((error) => {
-        toastr.error(error);
-      });
-  }
-
-  render() {
-    return (
-      <LoginPage
-        loginCredentials={this.state.loginCredentials}
-        updateLoginInfo={this.updateLoginInfo.bind(this)}
-        loginRequest={this.loginRequest.bind(this)}
-      />
-    );
-  }
-}
+export const LoginPageContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoginPage);

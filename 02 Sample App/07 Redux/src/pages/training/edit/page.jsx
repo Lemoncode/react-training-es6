@@ -1,21 +1,28 @@
 import * as React from 'react';
 import {TrainingFormComponentContainer} from './components/trainingFormContainer';
 
-export const TrainingEditPage = (props) => {
-  return (
-    <div>
-      <h2 className="jumbotron">Edit Training</h2>
-      <TrainingFormComponentContainer
-        training={props.training}
-        trainingErrors={props.trainingErrors}
-        onChange={props.onChange}
-        save={props.save}
-      />
-    </div>
-  );
+export class TrainingEditPage extends React.Component {
+  componentDidMount() {
+    this.props.fetchTrainingById(this.props.trainingId);
+  }
+
+  render() {
+    return (
+      <div>
+        <h2 className="jumbotron">Edit Training</h2>
+        <TrainingFormComponentContainer
+          training={this.props.training}
+          trainingErrors={this.props.trainingErrors}
+          onChange={this.props.onChange}
+          save={this.props.save}
+        />
+      </div>
+    );
+  }
 }
 
 TrainingEditPage.propTypes = {
+  trainingId: React.PropTypes.number.isRequired,
   training: React.PropTypes.shape({
     id: React.PropTypes.number.isRequired,
     name: React.PropTypes.string.isRequired,
@@ -29,6 +36,7 @@ TrainingEditPage.propTypes = {
     url: React.PropTypes.string,
     endDate: React.PropTypes.string,
   }).isRequired,
+  fetchTrainingById: React.PropTypes.func.isRequired,
   onChange: React.PropTypes.func.isRequired,
   save: React.PropTypes.func.isRequired,
 }
