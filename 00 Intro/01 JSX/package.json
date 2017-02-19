@@ -1,14 +1,14 @@
 {
   "name": "sample-00-01",
   "version": "1.0.0",
-  "description": "00 Intro / 00 Boilerplate sample using React,TypeScript and Webpack 2",
+  "description": "00 Intro / 00 Boilerplate sample using React,ES6 and Webpack 2",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --inline"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Lemoncode/react-training-ts.git"
+    "url": "git+https://github.com/Lemoncode/react-training-es6.git"
   },
   "keywords": [
     "react",
@@ -18,9 +18,9 @@
   "author": "Lemoncode",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Lemoncode/react-training-ts/issues"
+    "url": "https://github.com/Lemoncode/react-training-es6/issues"
   },
-  "homepage": "https://github.com/Lemoncode/react-training-ts#readme",
+  "homepage": "https://github.com/Lemoncode/react-training-es6#readme",
   "devDependencies": {
     "@types/react": "^15.0.8",
     "@types/react-dom": "^0.14.23",
