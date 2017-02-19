@@ -1,17 +1,12 @@
 import * as React from 'react';
 
-interface Props extends React.Props<{}> {
-  visible: boolean;
-  onClick: () => void;
-}
-
-const getStyles = (isVisible: boolean) => {
+const getStyles = (isVisible) => {
   const opacity = isVisible ? 1 : 0;
   const visibility = isVisible ? 'visible' : 'hidden';
   return { opacity, visibility };
 }
 
-const Modal: React.StatelessComponent<Props> = (props) => {
+export const Modal = (props) => {
   const modalClassName = props.visible ? 'in' : '';
   return (
     <div className="animated" style={getStyles(props.visible)}>
@@ -38,6 +33,7 @@ Modal.defaultProps = {
   visible: false
 };
 
-export {
-  Modal
+Modal.propTypes = {
+  visible: React.PropTypes.bool.isRequired,
+  onClick: React.PropTypes.func.isRequired,
 };
