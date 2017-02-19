@@ -1,17 +1,12 @@
 import * as React from 'react';
 
-interface Props extends React.Props<{}> {
-  visible?: boolean;
-  text?: string;
-}
-
-const getStyles = (visible: boolean) => {
+const getStyles = (visible) => {
   const opacity = visible ? 1 : 0;
   const visibility = visible ? 'visible' : 'hidden';
   return { opacity, visibility };
 }
 
-const Modal: React.StatelessComponent<Props> = (props) => {
+export const Modal = (props) => {
   const modalClassName = props.visible ? 'in' : '';
   const style = getStyles(props.visible);
   return (
@@ -37,6 +32,7 @@ Modal.defaultProps = {
   text: `You did not give me text`
 };
 
-export {
-  Modal
+Modal.propTypes = {
+  visible: React.PropTypes.bool,
+  text: React.PropTypes.string,
 };
