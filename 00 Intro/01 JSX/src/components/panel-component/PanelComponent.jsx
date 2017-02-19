@@ -1,11 +1,6 @@
 import * as React from 'react';
 
-interface Props {
-  title: string;
-  children?: React.ReactNode | React.ReactNode[];
-}
-
-const PanelComponent = (props: Props) => (
+export const PanelComponent = (props) => (
   <div className="panel panel-primary">
     <div className="panel-heading">
       <div className="panel-title"><strong>{props.title}</strong></div>
@@ -16,6 +11,10 @@ const PanelComponent = (props: Props) => (
   </div>
 );
 
-export {
-  PanelComponent
-};
+PanelComponent.propTypes = {
+  title: React.PropTypes.string.isRequired,
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.element,
+    React.PropTypes.arrayOf(React.PropTypes.element),
+  ]),
+}

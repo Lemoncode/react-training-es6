@@ -1,11 +1,6 @@
 import * as React from 'react';
-import { User } from '../../entity/User';
 
-interface Props {
-  user: User;
-}
-
-const UsersTableRowComponent = (props: Props) => (
+export const UsersTableRowComponent = (props) => (
   <tr className="form-group">
     <td>{props.user.name}</td>
     <td>{props.user.dateRegistered}</td>
@@ -27,6 +22,12 @@ const getLabelStatus = function (status: string) {
   return statusList[status] || label;
 };
 
-export {
-  UsersTableRowComponent
+UsersTableRowComponent.propTypes = {
+  user: React.PropTypes.shape({
+    id: React.PropTypes.number,
+    name: React.PropTypes.string.isRequired,
+    dateRegistered: React.PropTypes.string.isRequired,
+    role: React.PropTypes.string.isRequired,
+    status: React.PropTypes.string.isRequired,
+  }).isRequired,
 };

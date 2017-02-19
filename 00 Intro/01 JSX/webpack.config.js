@@ -9,7 +9,7 @@ module.exports = {
     extensions: ['.js', '.jsx', '.css'],
   },
   entry: {
-    app: './index.tsx',
+    app: './index.jsx',
     styles: './css/styles.css',
     vendor: [
       'react',
@@ -27,6 +27,7 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
+        exclude: /node_modules/,
         loader: 'babel-loader',
       },
       {
