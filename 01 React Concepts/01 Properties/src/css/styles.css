@@ -1,0 +1,19 @@
+.container {
+  margin-top: 50px;
+}
+.animated {
+  -webkit-transition: opacity .15s ease-out, visibility .3s ease-out;
+  transition: opacity .15s ease-out, visibility .3s ease-out;
+}
+
+.modal {
+  display: block;
+}
+
+.modal .modal-dialog {
+  cursor: pointer;
+}
+
+.borderless {
+  border-color: transparent;
+}

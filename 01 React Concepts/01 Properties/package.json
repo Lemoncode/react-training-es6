@@ -1,0 +1,44 @@
+{
+  "name": "01-react-concepts-01-properties",
+  "version": "1.0.0",
+  "description": "Sample showing how React props works",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "author": "Lemoncode",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lemoncode/react-training-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Lemoncode/react-training-ts/issues"
+  },
+  "homepage": "https://github.com/Lemoncode/react-training-ts#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "jquery": "^3.1.1",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  },
+  "keywords": [
+    "react",
+    "training",
+    "typescript"
+  ],
+  "devDependencies": {
+    "@types/react": "^15.0.9",
+    "@types/react-dom": "^0.14.23",
+    "awesome-typescript-loader": "^3.0.4-rc.2",
+    "css-loader": "^0.26.1",
+    "extract-text-webpack-plugin": "2.0.0-rc.3",
+    "file-loader": "^0.10.0",
+    "html-webpack-plugin": "^2.28.0",
+    "style-loader": "^0.13.1",
+    "typescript": "^2.1.6",
+    "url-loader": "^0.5.7",
+    "webpack": "^2.2.0",
+    "webpack-dev-server": "^2.3.0"
+  }
+}
