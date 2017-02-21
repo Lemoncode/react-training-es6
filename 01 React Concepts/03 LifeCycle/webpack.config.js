@@ -74,6 +74,11 @@ module.exports = {
     ]
   },
   plugins: [
+    // Caching vendors with manifest
+    // https://webpack.js.org/guides/code-splitting-libraries/#manifest-file
+    new webpack.optimize.CommonsChunkPlugin({
+      names: ['vendor', 'manifest'],
+    }),
     new ExtractTextPlugin({
       filename: '[name].css',
       disable: false,

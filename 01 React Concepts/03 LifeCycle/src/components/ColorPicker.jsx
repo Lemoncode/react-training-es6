@@ -3,6 +3,7 @@ import $ from 'jquery';
 import 'bootstrap-colorpicker';
 
 export class ColorPicker extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -35,36 +36,44 @@ export class ColorPicker extends React.Component {
 
   componentDidMount() {
     // Initialize jQuery colorpicker
+    // Ref: https://itsjavi.com/bootstrap-colorpicker/
     $(this.inputPicker)['colorpicker']({
-      color: this.props.color,
+      color: this.props.color || false,
       align: 'right'
     });
   }
 
   componentDidUpdate() {
     // Apply the new color in jQuery colorpicker
-    $(this.inputPicker).colorpicker('setValue', this.props.color);
+    $(this.inputPicker)['colorpicker']('setValue', this.props.color);
+
+    // Remove input value if no color because it won't use fallbackColor/fallbackFormat
+    // See https://github.com/itsjavi/bootstrap-colorpicker/issues/207
+    // There is actually no way to apply 'false' in setValue method to reset colorpicker.
+    if (!this.props.color) {
+      this.inputPicker.value = '';
+    }
 
     // Show colorpicker popover if needs to be open
     if (this.props.open) {
       this.inputPicker.focus();
-      $(this.inputPicker).colorpicker('show');
+      $(this.inputPicker)['colorpicker']('show');
     }
   }
 
   componentWillUnmount() {
     // Destroy jQuery colorpicker
-    $(this.inputPicker).colorpicker('destroy');
+    $(this.inputPicker)['colorpicker']('destroy');
   }
 
 }
 
-ColorPicker.defaultProps = {
-  open: false
+ColorPicker.propTypes = {
+  onColorPick: React.PropTypes.func.isRequired,
+  color: React.PropTypes.string,
+  open: React.PropTypes.bool
 };
 
-ColorPicker.propTypes = {
-  color: React.PropTypes.string.isRequired,
-  open: React.PropTypes.bool,
-  onColorPick: React.PropTypes.func.isRequired
+ColorPicker.defaultProps = {
+  open: false
 };
