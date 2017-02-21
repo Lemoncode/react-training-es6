@@ -1,0 +1,16 @@
+* {
+  outline: none;
+}
+
+h2 {
+    padding: 20px 0px;
+}
+
+.form-control:read-only {
+  background-color: white;
+}
+
+.white, .white:hover, .white:active, .white:focus, .white:visited {
+  color: white;
+  border-color: white;
+}
