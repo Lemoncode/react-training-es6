@@ -19,7 +19,7 @@ export class App extends React.Component {
           <h2 className="col-sm-6 col-sm-offset-1">React component lifecycle methods</h2>
         </header>
         <FormColor onSubmit={this.onSubmit} />
-      </main >
+      </main>
     );
   }
 
