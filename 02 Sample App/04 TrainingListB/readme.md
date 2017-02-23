@@ -265,7 +265,7 @@ TableRowComponent.propTypes = {
 ### ./src/pages/training/list/components/trainingRow.jsx
 ```diff
 import * as React from 'react';
-import {TableRowComponent} from '../../../../common/components/tableRow';
++ import {TableRowComponent} from '../../../../common/components/tableRow';
 
 // https://github.com/bvaughn/react-virtualized/blob/master/docs/Table.md
 // https://github.com/bvaughn/react-virtualized/blob/master/source/Table/defaultRowRenderer.js
@@ -420,7 +420,7 @@ import {AutoSizer, Table, Column} from 'react-virtualized';
 ```diff
 import * as React from 'react';
 import {Training} from '../../../../models/training';
-import {TableRowProps, TableRowComponent} from '../../../../common/components/tableRow';
+import {TableRowComponent} from '../../../../common/components/tableRow';
 + import classNames from './trainingRowStyles';
 
 // https://github.com/bvaughn/react-virtualized/blob/master/docs/Table.md
