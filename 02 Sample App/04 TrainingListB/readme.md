@@ -150,7 +150,7 @@ export const TrainingRowComponent = (props) => {
 -       <span>{props.training.name}</span>
 -     </td>
 -     <td>
--       <a href={props.training.url} target="blank">{props.training.url}</a>
+-       <a href={props.training.url} target="_blank">{props.training.url}</a>
 -     </td>
 -     <td>
 -       <a className="btn btn-primary"><i className="glyphicon glyphicon-pencil" /></a>
@@ -177,7 +177,7 @@ export const TrainingRowComponent = (props) => {
 +       className={props.columns[2].props.className}
 +       style={props.columns[2].props.style}
 +     >
-+       <a href={props.rowData.url} target="blank">{props.rowData.url}</a>
++       <a href={props.rowData.url} target="_blank">{props.rowData.url}</a>
 +     </div>
 +     <div
 +       className={`${props.columns[3].props.className}`}
@@ -295,7 +295,7 @@ export const TrainingRowComponent = (props: Props) => {
 -       className={props.columns[2].props.className}
 -       style={props.columns[2].props.style}
 -     >
--       <a href={props.rowData.url} target="blank">{props.rowData.url}</a>
+-       <a href={props.rowData.url} target="_blank">{props.rowData.url}</a>
 -     </div>
 -     <div
 -       className={`${props.columns[3].props.className}`}
@@ -310,7 +310,7 @@ export const TrainingRowComponent = (props: Props) => {
 +   >
 +     <input type="checkbox" checked={props.rowData.isActive} disabled/>
 +     <span>{props.rowData.name}</span>
-+     <a href={props.rowData.url} target="blank">{props.rowData.url}</a>
++     <a href={props.rowData.url} target="_blank">{props.rowData.url}</a>
 +     <a className=" btn btn-primary"><i className="glyphicon glyphicon-pencil" /></a>
 +   </TableRowComponent>
   );
@@ -438,7 +438,7 @@ export const TrainingRowComponent = (props) => {
     >
       <input type="checkbox" checked={props.rowData.isActive} disabled/>
       <span>{props.rowData.name}</span>
-      <a href={props.rowData.url} target="blank">{props.rowData.url}</a>
+      <a href={props.rowData.url} target="_blank">{props.rowData.url}</a>
       <a className=" btn btn-primary"><i className="glyphicon glyphicon-pencil" /></a>
     </TableRowComponent>
   );

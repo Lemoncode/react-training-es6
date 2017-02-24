@@ -17,7 +17,7 @@ export const TrainingRowComponent = (props) => {
     >
       <input type="checkbox" checked={props.rowData.isActive} disabled/>
       <span>{props.rowData.name}</span>
-      <a href={props.rowData.url} target="blank">{props.rowData.url}</a>
+      <a href={props.rowData.url} target="_blank">{props.rowData.url}</a>
       <a className=" btn btn-primary"><i className="glyphicon glyphicon-pencil" /></a>
     </TableRowComponent>
   );

@@ -220,7 +220,7 @@ export const TrainingRowComponent = (props) => {
         <span>{props.training.name}</span>
       </td>
       <td>
-        <a href={props.training.url} target="blank">{props.training.url}</a>
+        <a href={props.training.url} target="_blank">{props.training.url}</a>
       </td>
       <td>
         <a className="btn btn-primary"><i className="glyphicon glyphicon-pencil" /></a>
